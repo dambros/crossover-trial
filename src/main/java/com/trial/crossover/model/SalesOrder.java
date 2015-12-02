@@ -25,17 +25,17 @@ public class SalesOrder {
 	@Column(name = "sales_order_id")
 	private Long id;
 
-	@Column(name = "sales_order_number", nullable = false)
+	@Column(name = "sales_order_number")
 	private long orderNumber;
 
-	@Column(name = "sales_order_total_price", nullable = false)
+	@Column(name = "sales_order_total_price")
 	private float totalPrice;
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "order")
 	private List<SalesOrderProduct> orderProducts;
 
 	@ManyToOne
-	@JoinColumn(name = "sales_order_customer_id", nullable = false)
+	@JoinColumn(name = "sales_order_customer_id")
 	private Customer customer;
 
 	public Long getId() {

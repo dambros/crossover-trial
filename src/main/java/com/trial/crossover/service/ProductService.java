@@ -9,5 +9,6 @@ import java.util.List;
  * Date: 12/2/2015
  */
 public interface ProductService {
-	List<ProductDTO> getProducts();
+	List<ProductDTO> all();
+	ProductDTO create(ProductDTO dto);
 }

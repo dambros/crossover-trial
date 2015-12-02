@@ -20,13 +20,13 @@ public class Product {
 	@Column(name = "product_id")
 	private Long id;
 
-	@Column(name = "product_description", nullable = false)
+	@Column(name = "product_description")
 	private String description;
 
-	@Column(name = "product_price", nullable = false)
+	@Column(name = "product_price")
 	private float price;
 
-	@Column(name = "product_quantity", nullable = false)
+	@Column(name = "product_quantity")
 	private int quantity;
 
 	public Long getId() {

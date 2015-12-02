@@ -4,7 +4,7 @@ import com.trial.crossover.dao.ProductDAO;
 import com.trial.crossover.dto.ProductDTO;
 import com.trial.crossover.model.Product;
 import com.trial.crossover.service.ProductService;
-import com.trial.crossover.transformer.ProductTransformer;
+import com.trial.crossover.transformer.GenericTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,16 +22,27 @@ class ProductServiceImpl implements ProductService {
 	@Autowired
 	private ProductDAO productDAO;
 
+	@Autowired
+	private GenericTransformer<ProductDTO, Product> transformer;
+
 	@Transactional(readOnly = true)
-	public List<ProductDTO> getProducts() {
-		List<Product> products = productDAO.getProducts();
+	public List<ProductDTO> all() {
+		List<Product> products = productDAO.all();
 		List<ProductDTO> dtos = new ArrayList<ProductDTO>(products.size());
 
 		for (Product p : products) {
-			dtos.add(ProductTransformer.getProductDTOFromModel(p));
+			dtos.add(transformer.getDTOFromModel(p, ProductDTO.class));
 		}
 
 		return dtos;
+	}
+
+	@Transactional
+	public ProductDTO create(ProductDTO dto) {
+		Product p = transformer.getModelFromDTO(dto, Product.class);
+		p = productDAO.create(p);
+		return transformer.getDTOFromModel(p, ProductDTO.class);
+
 	}
 
 }

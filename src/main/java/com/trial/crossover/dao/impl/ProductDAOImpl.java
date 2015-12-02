@@ -16,8 +16,13 @@ import java.util.List;
 @Repository
 class ProductDAOImpl extends BaseDAO implements ProductDAO {
 
-	public List<Product> getProducts() {
+	public List<Product> all() {
 		Query query = getCurrentSession().createQuery("FROM Product c");
 		return (List<Product>) query.list();
+	}
+
+	public Product create(Product product) {
+		getCurrentSession().save(product);
+		return product;
 	}
 }

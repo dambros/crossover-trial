@@ -9,5 +9,6 @@ import java.util.List;
  * Date: 12/2/2015
  */
 public interface ProductDAO {
-	List<Product> getProducts();
+	List<Product> all();
+	Product create(Product product);
 }
