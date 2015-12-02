@@ -31,8 +31,8 @@ public class SalesOrder {
 	@Column(name = "sales_order_total_price", nullable = false)
 	private float totalPrice;
 
-	@OneToMany(fetch = FetchType.LAZY)
-	private List<Product> products;
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "order")
+	private List<SalesOrderProduct> orderProducts;
 
 	@ManyToOne
 	@JoinColumn(name = "sales_order_customer_id", nullable = false)
@@ -62,12 +62,12 @@ public class SalesOrder {
 		this.totalPrice = totalPrice;
 	}
 
-	public List<Product> getProducts() {
-		return products;
+	public List<SalesOrderProduct> getOrderProducts() {
+		return orderProducts;
 	}
 
-	public void setProducts(List<Product> products) {
-		this.products = products;
+	public void setOrderProducts(List<SalesOrderProduct> orderProducts) {
+		this.orderProducts = orderProducts;
 	}
 
 	public Customer getCustomer() {

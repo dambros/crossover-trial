@@ -37,6 +37,7 @@ public class DataConfig {
 	private static final String PROPERTY_NAME_SERVER_USERNAME = "hibernate.server.username";
 	private static final String PROPERTY_NAME_SERVER_PASSWORD = "hibernate.server.password";
 	private static final String PROPERTY_NAME_SERVER_HBM2DDL_AUTO = "hibernate.server.hbm2ddl_auto";
+	private static final String PROPERTY_NAME_SERVER_IMPORT_SCRIPT = "hibernate.server.import.script";
 
 
 	@Profile("default")
@@ -74,7 +75,7 @@ public class DataConfig {
 		properties.put(PROPERTY_NAME_HIBERNATE_SHOW_SQL, "true");
 		properties.put(PROPERTY_NAME_HIBERNATE_HBM2DDL_AUTO, env.getRequiredProperty(PROPERTY_NAME_SERVER_HBM2DDL_AUTO));
 		properties.put(PROPERTY_NAME_HIBERNATE_HBM2DDL_IMPORT_FILES_EXTRACTOR, "org.hibernate.tool.hbm2ddl.MultipleLinesSqlCommandExtractor");
-		properties.put(PROPERTY_NAME_HIBERNATE_HBM2DDL_IMPORT_FILES, "hibernate.hbm2ddl.import_files");
+		properties.put(PROPERTY_NAME_HIBERNATE_HBM2DDL_IMPORT_FILES, env.getRequiredProperty(PROPERTY_NAME_SERVER_IMPORT_SCRIPT));
 		return properties;
 	}
 
@@ -86,7 +87,7 @@ public class DataConfig {
 		properties.put(PROPERTY_NAME_HIBERNATE_SHOW_SQL, "false");
 		properties.put(PROPERTY_NAME_HIBERNATE_HBM2DDL_AUTO, "create-drop");
 		properties.put(PROPERTY_NAME_HIBERNATE_HBM2DDL_IMPORT_FILES_EXTRACTOR, "org.hibernate.tool.hbm2ddl.MultipleLinesSqlCommandExtractor");
-		properties.put(PROPERTY_NAME_HIBERNATE_HBM2DDL_IMPORT_FILES, "hibernate.hbm2ddl.import_files");
+		properties.put(PROPERTY_NAME_HIBERNATE_HBM2DDL_IMPORT_FILES, env.getRequiredProperty(PROPERTY_NAME_SERVER_IMPORT_SCRIPT));
 		return properties;
 	}
 
