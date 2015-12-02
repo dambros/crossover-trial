@@ -16,11 +16,18 @@ import java.util.List;
 @Repository
 class ProductDAOImpl extends BaseDAO implements ProductDAO {
 
+	@Override
 	public List<Product> all() {
 		Query query = getCurrentSession().createQuery("FROM Product c");
 		return (List<Product>) query.list();
 	}
 
+	@Override
+	public Product get(long id) {
+		return (Product) getCurrentSession().get(Product.class, id);
+	}
+
+	@Override
 	public Product create(Product product) {
 		getCurrentSession().save(product);
 		return product;

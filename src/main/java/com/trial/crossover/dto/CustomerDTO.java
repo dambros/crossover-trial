@@ -1,50 +1,21 @@
 package com.trial.crossover.dto;
 
-import com.trial.crossover.model.SalesOrder;
-
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import java.util.List;
 
 /**
  * Created by: dambros
  * Date: 12/2/2015
  */
 @Entity
-@Table(name = "customers")
 public class CustomerDTO {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "customer_id")
 	private Long id;
-
-	@Column(name = "customer_name")
 	private String name;
-
-	@Column(name = "customer_address")
 	private String address;
-
-	@Column(name = "customer_phone1")
 	private String phone1;
-
-	@Column(name = "customer_phone2")
 	private String phone2;
-
-	@Column(name = "customer_credit_limit")
 	private long creditLimit;
-
-	@Column(name = "customer_current_credit")
 	private long currentCredit;
-
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "customer")
-	private List<SalesOrder> orders;
 
 	public Long getId() {
 		return id;
@@ -100,13 +71,5 @@ public class CustomerDTO {
 
 	public void setCurrentCredit(long currentCredit) {
 		this.currentCredit = currentCredit;
-	}
-
-	public List<SalesOrder> getOrders() {
-		return orders;
-	}
-
-	public void setOrders(List<SalesOrder> orders) {
-		this.orders = orders;
 	}
 }

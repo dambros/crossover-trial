@@ -1,9 +1,10 @@
 package com.trial.crossover.controller;
 
-import com.trial.crossover.dto.ProductDTO;
-import com.trial.crossover.service.ProductService;
+import com.trial.crossover.dto.CustomerDTO;
+import com.trial.crossover.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -16,21 +17,27 @@ import java.util.List;
  * Date: 12/2/2015
  */
 @Controller
-@RequestMapping(value = "products", produces = "application/json;charset=UTF-8")
+@RequestMapping(value = "customers", produces = "application/json;charset=UTF-8")
 public class CustomerController {
 
 	@Autowired
-	private ProductService productService;
+	private CustomerService customerService;
 
 	@RequestMapping(value = "/all", method = RequestMethod.GET)
 	@ResponseBody
-	public List<ProductDTO> all() {
-		return productService.all();
+	public List<CustomerDTO> all() {
+		return customerService.all();
 	}
 
 	@RequestMapping(value = "/new", method = RequestMethod.POST)
 	@ResponseBody
-	public ProductDTO create(@RequestBody ProductDTO dto) {
-		return productService.create(dto);
+	public CustomerDTO create(@RequestBody CustomerDTO dto) {
+		return customerService.create(dto);
+	}
+
+	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
+	@ResponseBody
+	public CustomerDTO get(@PathVariable long id) {
+		return customerService.get(id);
 	}
 }

@@ -1,6 +1,6 @@
 package com.trial.crossover.dao;
 
-import com.trial.crossover.model.Product;
+import com.trial.crossover.model.Customer;
 
 import java.util.List;
 
@@ -9,6 +9,7 @@ import java.util.List;
  * Date: 12/2/2015
  */
 public interface CustomerDAO {
-	List<Product> all();
-	Product create(Product product);
+	List<Customer> all();
+	Customer get(long id);
+	Customer create(Customer Customer);
 }

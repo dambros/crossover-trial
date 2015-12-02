@@ -10,5 +10,6 @@ import java.util.List;
  */
 public interface ProductDAO {
 	List<Product> all();
+	Product get(long id);
 	Product create(Product product);
 }

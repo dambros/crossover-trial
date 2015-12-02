@@ -1,6 +1,6 @@
 package com.trial.crossover.service;
 
-import com.trial.crossover.dto.ProductDTO;
+import com.trial.crossover.dto.CustomerDTO;
 
 import java.util.List;
 
@@ -9,6 +9,7 @@ import java.util.List;
  * Date: 12/2/2015
  */
 public interface CustomerService {
-	List<ProductDTO> all();
-	ProductDTO create(ProductDTO dto);
+	List<CustomerDTO> all();
+	CustomerDTO get(long id);
+	CustomerDTO create(CustomerDTO dto);
 }

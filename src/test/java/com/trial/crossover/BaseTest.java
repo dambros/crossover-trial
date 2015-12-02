@@ -2,6 +2,7 @@ package com.trial.crossover;
 
 import com.google.gson.Gson;
 import com.trial.crossover.config.WebConfig;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.junit.Assert;
@@ -37,18 +38,21 @@ public abstract class BaseTest {
 	public MockMvc mockMvc;
 	public Gson gson = new Gson();
 
-	@Before
 	public void init() {
 		Assert.assertNotNull(wac);
 		mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
 	}
 
-	protected void save(Object... models) {
+	public void clean() {
 		Session session = sessionFactory.openSession();
 		session.beginTransaction();
-		for (Object model : models) {
-			session.save(model);
-		}
+
+		Query deleteProducts = session.createQuery("delete from Product");
+		deleteProducts.executeUpdate();
+
+		Query deleteCustomers = session.createQuery("delete from Customer");
+		deleteCustomers.executeUpdate();
+
 		session.getTransaction().commit();
 		session.close();
 	}

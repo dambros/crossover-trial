@@ -3,9 +3,8 @@ package com.trial.crossover.controller;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.trial.crossover.BaseTest;
-import com.trial.crossover.dto.ProductDTO;
-import com.trial.crossover.model.Product;
-import com.trial.crossover.service.ProductService;
+import com.trial.crossover.dto.CustomerDTO;
+import com.trial.crossover.service.CustomerService;
 import org.hamcrest.MatcherAssert;
 import org.junit.After;
 import org.junit.Before;
@@ -27,28 +26,32 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class CustomerControllerTest extends BaseTest {
 
 	@Autowired
-	private ProductService productService;
+	private CustomerService customerService;
 
-	private ProductDTO p1;
-	private ProductDTO p2;
+	private CustomerDTO c1;
+	private CustomerDTO c2;
 
 	@Override
 	@Before
 	public void init() {
 		super.init();
 
-		//adding some products
-		p1 = new ProductDTO();
-		p1.setDescription("description 1");
-		p1.setPrice(10);
-		p1.setQuantity(100);
-		p1 = productService.create(p1);
+		//adding some customers
+		c1 = new CustomerDTO();
+		c1.setName("Customer1");
+		c1.setAddress("Address1");
+		c1.setPhone1("123456789");
+		c1.setPhone2("123456789");
+		c1.setCreditLimit(1000);
+		c1 = customerService.create(c1);
 
-		p2 = new ProductDTO();
-		p2.setDescription("description 2");
-		p2.setPrice(100.50f);
-		p2.setQuantity(100);
-		p2 = productService.create(p2);
+		c2 = new CustomerDTO();
+		c2.setName("Customer2");
+		c2.setAddress("Address2");
+		c2.setPhone1("123456789");
+		c2.setPhone2("123456789");
+		c2.setCreditLimit(5000);
+		c2 = customerService.create(c2);
 	}
 
 	@Override
@@ -58,8 +61,8 @@ public class CustomerControllerTest extends BaseTest {
 	}
 
 	@org.junit.Test
-	public void test_getAllProducts() throws Exception {
-		JsonArray array = gson.fromJson(mockMvc.perform(get("/products/all"))
+	public void test_getAllCustomerss() throws Exception {
+		JsonArray array = gson.fromJson(mockMvc.perform(get("/customers/all"))
 				.andExpect(status().isOk())
 				.andExpect(content().contentType("application/json;charset=UTF-8"))
 				.andReturn().getResponse().getContentAsString(), JsonArray.class);
@@ -70,59 +73,72 @@ public class CustomerControllerTest extends BaseTest {
 		MatcherAssert.assertThat(array.size(), equalTo(2));
 
 		MatcherAssert.assertThat(obj1.get("id").getAsString(), notNullValue());
-		MatcherAssert.assertThat(obj1.get("description").getAsString(), equalTo("description 1"));
-		MatcherAssert.assertThat(obj1.get("price").getAsString(), equalTo("10.0"));
-		MatcherAssert.assertThat(obj1.get("quantity").getAsString(), equalTo("100"));
+		MatcherAssert.assertThat(obj1.get("name").getAsString(), equalTo("Customer1"));
+		MatcherAssert.assertThat(obj1.get("address").getAsString(), equalTo("Address1"));
+		MatcherAssert.assertThat(obj1.get("phone1").getAsString(), equalTo("123456789"));
+		MatcherAssert.assertThat(obj1.get("phone2").getAsString(), equalTo("123456789"));
+		MatcherAssert.assertThat(obj1.get("creditLimit").getAsString(), equalTo("1000"));
+		MatcherAssert.assertThat(obj1.get("currentCredit").getAsString(), equalTo("0"));
 
 		MatcherAssert.assertThat(obj2.get("id").getAsString(), notNullValue());
-		MatcherAssert.assertThat(obj2.get("description").getAsString(), equalTo("description 2"));
-		MatcherAssert.assertThat(obj2.get("price").getAsString(), equalTo("100.5"));
-		MatcherAssert.assertThat(obj2.get("quantity").getAsString(), equalTo("100"));
+		MatcherAssert.assertThat(obj2.get("name").getAsString(), equalTo("Customer2"));
+		MatcherAssert.assertThat(obj2.get("address").getAsString(), equalTo("Address2"));
+		MatcherAssert.assertThat(obj2.get("phone1").getAsString(), equalTo("123456789"));
+		MatcherAssert.assertThat(obj2.get("phone2").getAsString(), equalTo("123456789"));
+		MatcherAssert.assertThat(obj2.get("creditLimit").getAsString(), equalTo("5000"));
+		MatcherAssert.assertThat(obj2.get("currentCredit").getAsString(), equalTo("0"));
 	}
 
 	@org.junit.Test
-	public void test_createNewProducts() throws Exception {
-		int previousProducts = gson.fromJson(mockMvc.perform(get("/products/all"))
+	public void test_createNewCustomer() throws Exception {
+		int previousCustomers = gson.fromJson(mockMvc.perform(get("/customers/all"))
 				.andExpect(status().isOk())
 				.andExpect(content().contentType("application/json;charset=UTF-8"))
 				.andReturn().getResponse().getContentAsString(), JsonArray.class).size();
 
-		Product prod = new Product();
-		prod.setDescription("new Prod");
-		prod.setPrice(66.66f);
-		prod.setQuantity(99);
-		String json = gson.toJson(prod);
+		CustomerDTO c = new CustomerDTO();
+		c.setName("New Customer");
+		c.setAddress("New Address");
+		c.setPhone1("111111111");
+		c.setPhone2("222222222");
+		c.setCreditLimit(123);
+		String json = gson.toJson(c);
 
-		JsonObject obj = gson.fromJson(mockMvc.perform(post("/products/new")
+		JsonObject obj = gson.fromJson(mockMvc.perform(post("/customers/new")
 				.contentType(MediaType.APPLICATION_JSON).content(json))
 				.andExpect(status().isOk())
 				.andExpect(content().contentType("application/json;charset=UTF-8"))
 				.andReturn().getResponse().getContentAsString(), JsonObject.class);
 
-		int currentProducts = gson.fromJson(mockMvc.perform(get("/products/all"))
+		int currentCustomers = gson.fromJson(mockMvc.perform(get("/customers/all"))
 				.andExpect(status().isOk())
 				.andExpect(content().contentType("application/json;charset=UTF-8"))
 				.andReturn().getResponse().getContentAsString(), JsonArray.class).size();
 
-		MatcherAssert.assertThat(currentProducts, greaterThan(previousProducts));
+		MatcherAssert.assertThat(currentCustomers, greaterThan(previousCustomers));
 		MatcherAssert.assertThat(obj.get("id").getAsString(), notNullValue());
-		MatcherAssert.assertThat(obj.get("description").getAsString(), equalTo("new Prod"));
-		MatcherAssert.assertThat(obj.get("price").getAsString(), equalTo("66.66"));
-		MatcherAssert.assertThat(obj.get("quantity").getAsString(), equalTo("99"));
+		MatcherAssert.assertThat(obj.get("name").getAsString(), equalTo("New Customer"));
+		MatcherAssert.assertThat(obj.get("address").getAsString(), equalTo("New Address"));
+		MatcherAssert.assertThat(obj.get("phone1").getAsString(), equalTo("111111111"));
+		MatcherAssert.assertThat(obj.get("phone2").getAsString(), equalTo("222222222"));
+		MatcherAssert.assertThat(obj.get("creditLimit").getAsString(), equalTo("123"));
+		MatcherAssert.assertThat(obj.get("currentCredit").getAsString(), equalTo("0"));
 	}
 
 	@org.junit.Test
-	public void test_getProduct() throws Exception {
-		JsonObject obj = gson.fromJson(mockMvc.perform(get("/products/{id}", p1.getId()))
+	public void test_getCustomer() throws Exception {
+		JsonObject obj = gson.fromJson(mockMvc.perform(get("/customers/{id}", c1.getId()))
 				.andExpect(status().isOk())
 				.andExpect(content().contentType("application/json;charset=UTF-8"))
 				.andReturn().getResponse().getContentAsString(), JsonObject.class);
 
-
-		MatcherAssert.assertThat(obj.get("id").getAsString(), equalTo(p1.getId().toString()));
-		MatcherAssert.assertThat(obj.get("description").getAsString(), equalTo(p1.getDescription()));
-		MatcherAssert.assertThat(obj.get("price").getAsString(), equalTo(String.valueOf(p1.getPrice())));
-		MatcherAssert.assertThat(obj.get("quantity").getAsString(), equalTo(String.valueOf(p1.getQuantity())));
+		MatcherAssert.assertThat(obj.get("id").getAsString(), equalTo(c1.getId().toString()));
+		MatcherAssert.assertThat(obj.get("name").getAsString(), equalTo(c1.getName()));
+		MatcherAssert.assertThat(obj.get("address").getAsString(), equalTo(c1.getAddress()));
+		MatcherAssert.assertThat(obj.get("phone1").getAsString(), equalTo(c1.getPhone1()));
+		MatcherAssert.assertThat(obj.get("phone2").getAsString(), equalTo(c1.getPhone2()));
+		MatcherAssert.assertThat(obj.get("creditLimit").getAsString(), equalTo(String.valueOf(c1.getCreditLimit())));
+		MatcherAssert.assertThat(obj.get("currentCredit").getAsString(), equalTo(String.valueOf(c1.getCurrentCredit())));
 	}
 
 }

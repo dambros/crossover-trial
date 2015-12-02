@@ -1,9 +1,9 @@
 package com.trial.crossover.service.impl;
 
-import com.trial.crossover.dao.ProductDAO;
-import com.trial.crossover.dto.ProductDTO;
-import com.trial.crossover.model.Product;
-import com.trial.crossover.service.ProductService;
+import com.trial.crossover.dao.CustomerDAO;
+import com.trial.crossover.dto.CustomerDTO;
+import com.trial.crossover.model.Customer;
+import com.trial.crossover.service.CustomerService;
 import com.trial.crossover.transformer.GenericTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,32 +17,39 @@ import java.util.List;
  * Date: 12/2/2015
  */
 @Service
-class CustomerServiceImpl implements ProductService {
+class CustomerServiceImpl implements CustomerService {
 
 	@Autowired
-	private ProductDAO productDAO;
+	private CustomerDAO customerDAO;
 
 	@Autowired
-	private GenericTransformer<ProductDTO, Product> transformer;
+	private GenericTransformer<CustomerDTO, Customer> transformer;
 
+	@Override
 	@Transactional(readOnly = true)
-	public List<ProductDTO> all() {
-		List<Product> products = productDAO.all();
-		List<ProductDTO> dtos = new ArrayList<ProductDTO>(products.size());
+	public List<CustomerDTO> all() {
+		List<Customer> customers = customerDAO.all();
+		List<CustomerDTO> dtos = new ArrayList<>(customers.size());
 
-		for (Product p : products) {
-			dtos.add(transformer.getDTOFromModel(p, ProductDTO.class));
+		for (Customer c : customers) {
+			dtos.add(transformer.getDTOFromModel(c, CustomerDTO.class));
 		}
 
 		return dtos;
 	}
 
-	@Transactional
-	public ProductDTO create(ProductDTO dto) {
-		Product p = transformer.getModelFromDTO(dto, Product.class);
-		p = productDAO.create(p);
-		return transformer.getDTOFromModel(p, ProductDTO.class);
+	@Override
+	@Transactional(readOnly = true)
+	public CustomerDTO get(long id) {
+		return transformer.getDTOFromModel(customerDAO.get(id), CustomerDTO.class);
+	}
 
+	@Override
+	@Transactional
+	public CustomerDTO create(CustomerDTO dto) {
+		Customer c = transformer.getModelFromDTO(dto, Customer.class);
+		c = customerDAO.create(c);
+		return transformer.getDTOFromModel(c, CustomerDTO.class);
 	}
 
 }
