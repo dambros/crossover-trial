@@ -16,7 +16,7 @@ import java.util.List;
  * Date: 12/2/2015
  */
 @Controller
-@RequestMapping(value = "product", produces = "application/json;charset=UTF-8")
+@RequestMapping(value = "products", produces = "application/json;charset=UTF-8")
 public class ProductController {
 
 	@Autowired
