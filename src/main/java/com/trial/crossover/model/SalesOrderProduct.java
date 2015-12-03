@@ -15,7 +15,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "sales_orders_products")
-public class SalesOrderProduct {
+public class SalesOrderProduct implements com.trial.crossover.dto.Entity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -28,10 +28,6 @@ public class SalesOrderProduct {
 	@ManyToOne
 	@JoinColumn(name = "product_id")
 	private Product product;
-
-	@ManyToOne
-	@JoinColumn(name = "order_id")
-	private SalesOrder order;
 
 	public Long getId() {
 		return id;
@@ -57,11 +53,4 @@ public class SalesOrderProduct {
 		this.product = product;
 	}
 
-	public SalesOrder getOrder() {
-		return order;
-	}
-
-	public void setOrder(SalesOrder order) {
-		this.order = order;
-	}
 }

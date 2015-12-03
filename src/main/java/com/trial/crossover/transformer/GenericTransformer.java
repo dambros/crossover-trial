@@ -1,5 +1,7 @@
 package com.trial.crossover.transformer;
 
+import com.trial.crossover.dto.DTO;
+import com.trial.crossover.dto.Entity;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
@@ -13,7 +15,7 @@ import java.util.Set;
  * Date: 12/2/2015
  */
 @Component
-public class GenericTransformer<T, K> {
+public class GenericTransformer<T extends DTO, K extends Entity> {
 
 	public K getModelFromDTO(T dto, Class<K> clazz) {
 		K obj = null;

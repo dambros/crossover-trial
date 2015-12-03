@@ -4,11 +4,9 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.trial.crossover.BaseTest;
 import com.trial.crossover.dto.CustomerDTO;
-import com.trial.crossover.service.CustomerService;
 import org.hamcrest.MatcherAssert;
 import org.junit.After;
 import org.junit.Before;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 
 import static org.hamcrest.Matchers.equalTo;
@@ -25,33 +23,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 public class CustomerControllerTest extends BaseTest {
 
-	@Autowired
-	private CustomerService customerService;
-
-	private CustomerDTO c1;
-	private CustomerDTO c2;
-
 	@Override
 	@Before
 	public void init() {
 		super.init();
-
-		//adding some customers
-		c1 = new CustomerDTO();
-		c1.setName("Customer1");
-		c1.setAddress("Address1");
-		c1.setPhone1("123456789");
-		c1.setPhone2("123456789");
-		c1.setCreditLimit(1000.55f);
-		c1 = customerService.create(c1);
-
-		c2 = new CustomerDTO();
-		c2.setName("Customer2");
-		c2.setAddress("Address2");
-		c2.setPhone1("123456789");
-		c2.setPhone2("123456789");
-		c2.setCreditLimit(5000f);
-		c2 = customerService.create(c2);
 	}
 
 	@Override
@@ -228,6 +203,15 @@ public class CustomerControllerTest extends BaseTest {
 
 		mockMvc.perform(post("/customers/update")
 				.contentType(MediaType.APPLICATION_JSON).content(json4))
+				.andExpect(status().isBadRequest())
+				.andExpect(content().contentType("application/json;charset=UTF-8"));
+	}
+
+	@org.junit.Test
+	public void test_updateCustomerWithInvalidId() throws Exception {
+		c1.setId(-1l);
+		mockMvc.perform(post("/customers/update")
+				.contentType(MediaType.APPLICATION_JSON).content(gson.toJson(c1)))
 				.andExpect(status().isBadRequest())
 				.andExpect(content().contentType("application/json;charset=UTF-8"));
 	}

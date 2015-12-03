@@ -51,8 +51,19 @@ class CustomerServiceImpl implements CustomerService {
 
 	@Transactional
 	public CustomerDTO update(CustomerDTO dto) {
-		Customer c = transformer.getModelFromDTO(dto, Customer.class);
+		Customer c = customerDAO.get(dto.getId());
+
+		if (c == null) {
+			return null;
+		}
+
+		c.setName(dto.getName());
+		c.setAddress(dto.getAddress());
+		c.setPhone1(dto.getPhone1());
+		c.setPhone2(dto.getPhone2());
+		c.setCreditLimit(dto.getCreditLimit());
 		c = customerDAO.update(c);
+
 		return transformer.getDTOFromModel(c, CustomerDTO.class);
 	}
 

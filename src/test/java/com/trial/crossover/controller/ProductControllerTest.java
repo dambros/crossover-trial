@@ -4,11 +4,9 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.trial.crossover.BaseTest;
 import com.trial.crossover.dto.ProductDTO;
-import com.trial.crossover.service.ProductService;
 import org.hamcrest.MatcherAssert;
 import org.junit.After;
 import org.junit.Before;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 
 import static org.hamcrest.Matchers.equalTo;
@@ -25,29 +23,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 public class ProductControllerTest extends BaseTest {
 
-	@Autowired
-	private ProductService productService;
-
-	private ProductDTO p1;
-	private ProductDTO p2;
-
 	@Override
 	@Before
 	public void init() {
 		super.init();
-
-		//adding some products
-		p1 = new ProductDTO();
-		p1.setDescription("description 1");
-		p1.setPrice(10f);
-		p1.setQuantity(100);
-		p1 = productService.create(p1);
-
-		p2 = new ProductDTO();
-		p2.setDescription("description 2");
-		p2.setPrice(100.50f);
-		p2.setQuantity(100);
-		p2 = productService.create(p2);
 	}
 
 	@Override
@@ -206,6 +185,15 @@ public class ProductControllerTest extends BaseTest {
 
 		mockMvc.perform(post("/products/update")
 				.contentType(MediaType.APPLICATION_JSON).content(json4))
+				.andExpect(status().isBadRequest())
+				.andExpect(content().contentType("application/json;charset=UTF-8"));
+	}
+
+	@org.junit.Test
+	public void test_updateProductWithInvalidId() throws Exception {
+		p1.setId(-1l);
+		mockMvc.perform(post("/products/update")
+				.contentType(MediaType.APPLICATION_JSON).content(gson.toJson(p1)))
 				.andExpect(status().isBadRequest())
 				.andExpect(content().contentType("application/json;charset=UTF-8"));
 	}

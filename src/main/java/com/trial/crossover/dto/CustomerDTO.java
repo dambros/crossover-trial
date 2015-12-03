@@ -10,7 +10,7 @@ import javax.validation.constraints.NotNull;
  * Date: 12/2/2015
  */
 @Entity
-public class CustomerDTO {
+public class CustomerDTO implements DTO {
 
 	private Long id;
 	private String phone1;

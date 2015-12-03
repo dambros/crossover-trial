@@ -45,7 +45,13 @@ public class ProductController {
 		if (dto.getId() == null) {
 			return new ResponseEntity(new FieldErrorDTO("id", "Can't be null"), HttpStatus.BAD_REQUEST);
 		}
-		return new ResponseEntity(productService.update(dto), HttpStatus.OK);
+
+		dto = productService.update(dto);
+
+		if (dto == null) {
+			return new ResponseEntity(new FieldErrorDTO("id", "invalid value"), HttpStatus.BAD_REQUEST);
+		}
+		return new ResponseEntity(dto, HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)

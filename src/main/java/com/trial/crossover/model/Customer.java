@@ -16,7 +16,7 @@ import java.util.List;
  */
 @Entity
 @Table(name = "customers")
-public class Customer {
+public class Customer implements com.trial.crossover.dto.Entity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

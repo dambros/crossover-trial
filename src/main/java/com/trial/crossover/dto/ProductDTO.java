@@ -8,7 +8,7 @@ import javax.validation.constraints.NotNull;
  * Created by: dambros
  * Date: 12/2/2015
  */
-public class ProductDTO {
+public class ProductDTO implements DTO {
 
 	private Long id;
 
@@ -42,7 +42,9 @@ public class ProductDTO {
 	}
 
 	public void setPrice(Float price) {
-		this.price = price;
+		if (price != null && price > 0) {
+			this.price = price;
+		}
 	}
 
 	public Integer getQuantity() {
@@ -50,6 +52,8 @@ public class ProductDTO {
 	}
 
 	public void setQuantity(Integer quantity) {
-		this.quantity = quantity;
+		if (quantity != null && quantity > 0) {
+			this.quantity = quantity;
+		}
 	}
 }

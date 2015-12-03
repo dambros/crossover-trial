@@ -18,7 +18,7 @@ import java.util.List;
  */
 @Entity
 @Table(name = "sales_orders")
-public class SalesOrder {
+public class SalesOrder implements com.trial.crossover.dto.Entity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -31,7 +31,7 @@ public class SalesOrder {
 	@Column(name = "sales_order_total_price")
 	private float totalPrice;
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "order")
+	@OneToMany(fetch = FetchType.LAZY)
 	private List<SalesOrderProduct> orderProducts;
 
 	@ManyToOne

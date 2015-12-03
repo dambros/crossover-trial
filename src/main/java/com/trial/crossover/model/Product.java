@@ -13,7 +13,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "products")
-public class Product {
+public class Product implements com.trial.crossover.dto.Entity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
