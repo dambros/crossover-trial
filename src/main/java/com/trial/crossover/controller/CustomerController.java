@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -31,7 +32,7 @@ public class CustomerController {
 
 	@RequestMapping(value = "/new", method = RequestMethod.POST)
 	@ResponseBody
-	public CustomerDTO create(@RequestBody CustomerDTO dto) {
+	public CustomerDTO create(@RequestBody @Valid CustomerDTO dto) {
 		return customerService.create(dto);
 	}
 

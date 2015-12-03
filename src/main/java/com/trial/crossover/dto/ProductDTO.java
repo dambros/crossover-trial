@@ -1,5 +1,9 @@
 package com.trial.crossover.dto;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
+import javax.validation.constraints.NotNull;
+
 /**
  * Created by: dambros
  * Date: 12/2/2015
@@ -7,9 +11,15 @@ package com.trial.crossover.dto;
 public class ProductDTO {
 
 	private Long id;
+
+	@NotEmpty(message = "{generic.not.empty}")
 	private String description;
-	private float price;
-	private int quantity;
+
+	@NotNull(message = "{generic.not.null}")
+	private Float price;
+
+	@NotNull(message = "{generic.not.null}")
+	private Integer quantity;
 
 	public Long getId() {
 		return id;
@@ -27,19 +37,19 @@ public class ProductDTO {
 		this.description = description;
 	}
 
-	public float getPrice() {
+	public Float getPrice() {
 		return price;
 	}
 
-	public void setPrice(float price) {
+	public void setPrice(Float price) {
 		this.price = price;
 	}
 
-	public int getQuantity() {
+	public Integer getQuantity() {
 		return quantity;
 	}
 
-	public void setQuantity(int quantity) {
+	public void setQuantity(Integer quantity) {
 		this.quantity = quantity;
 	}
 }

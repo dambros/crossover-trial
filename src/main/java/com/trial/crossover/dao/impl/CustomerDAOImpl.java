@@ -17,18 +17,15 @@ import java.util.List;
 @Repository
 class CustomerDAOImpl extends BaseDAO implements CustomerDAO {
 
-	@Override
 	public List<Customer> all() {
 		Query query = getCurrentSession().createQuery("FROM Customer c");
 		return (List<Customer>) query.list();
 	}
 
-	@Override
 	public Customer get(long id) {
 		return (Customer) getCurrentSession().get(Customer.class, id);
 	}
 
-	@Override
 	public Customer create(Customer customer) {
 		getCurrentSession().save(customer);
 		return customer;

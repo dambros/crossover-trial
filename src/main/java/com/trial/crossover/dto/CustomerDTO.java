@@ -1,6 +1,9 @@
 package com.trial.crossover.dto;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
 import javax.persistence.Entity;
+import javax.validation.constraints.NotNull;
 
 /**
  * Created by: dambros
@@ -10,12 +13,18 @@ import javax.persistence.Entity;
 public class CustomerDTO {
 
 	private Long id;
-	private String name;
-	private String address;
 	private String phone1;
 	private String phone2;
-	private long creditLimit;
-	private long currentCredit;
+	private Long currentCredit;
+
+	@NotEmpty(message = "{generic.not.empty}")
+	private String name;
+
+	@NotEmpty(message = "{generic.not.empty}")
+	private String address;
+
+	@NotNull(message = "{generic.not.null}")
+	private Long creditLimit;
 
 	public Long getId() {
 		return id;
@@ -57,19 +66,19 @@ public class CustomerDTO {
 		this.phone2 = phone2;
 	}
 
-	public long getCreditLimit() {
+	public Long getCreditLimit() {
 		return creditLimit;
 	}
 
-	public void setCreditLimit(long creditLimit) {
+	public void setCreditLimit(Long creditLimit) {
 		this.creditLimit = creditLimit;
 	}
 
-	public long getCurrentCredit() {
+	public Long getCurrentCredit() {
 		return currentCredit;
 	}
 
-	public void setCurrentCredit(long currentCredit) {
+	public void setCurrentCredit(Long currentCredit) {
 		this.currentCredit = currentCredit;
 	}
 }

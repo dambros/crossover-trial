@@ -25,7 +25,6 @@ class CustomerServiceImpl implements CustomerService {
 	@Autowired
 	private GenericTransformer<CustomerDTO, Customer> transformer;
 
-	@Override
 	@Transactional(readOnly = true)
 	public List<CustomerDTO> all() {
 		List<Customer> customers = customerDAO.all();
@@ -38,13 +37,11 @@ class CustomerServiceImpl implements CustomerService {
 		return dtos;
 	}
 
-	@Override
 	@Transactional(readOnly = true)
 	public CustomerDTO get(long id) {
 		return transformer.getDTOFromModel(customerDAO.get(id), CustomerDTO.class);
 	}
 
-	@Override
 	@Transactional
 	public CustomerDTO create(CustomerDTO dto) {
 		Customer c = transformer.getModelFromDTO(dto, Customer.class);

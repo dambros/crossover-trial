@@ -23,10 +23,10 @@ public class Customer {
 	@Column(name = "customer_id")
 	private Long id;
 
-	@Column(name = "customer_name")
+	@Column(name = "customer_name", nullable = false)
 	private String name;
 
-	@Column(name = "customer_address")
+	@Column(name = "customer_address", nullable = false)
 	private String address;
 
 	@Column(name = "customer_phone1")
@@ -35,11 +35,11 @@ public class Customer {
 	@Column(name = "customer_phone2")
 	private String phone2;
 
-	@Column(name = "customer_credit_limit")
-	private long creditLimit;
+	@Column(name = "customer_credit_limit", nullable = false)
+	private Long creditLimit;
 
 	@Column(name = "customer_current_credit")
-	private long currentCredit;
+	private Long currentCredit;
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "customer")
 	private List<SalesOrder> orders;
@@ -84,19 +84,19 @@ public class Customer {
 		this.phone2 = phone2;
 	}
 
-	public long getCreditLimit() {
+	public Long getCreditLimit() {
 		return creditLimit;
 	}
 
-	public void setCreditLimit(long creditLimit) {
+	public void setCreditLimit(Long creditLimit) {
 		this.creditLimit = creditLimit;
 	}
 
-	public long getCurrentCredit() {
+	public Long getCurrentCredit() {
 		return currentCredit;
 	}
 
-	public void setCurrentCredit(long currentCredit) {
+	public void setCurrentCredit(Long currentCredit) {
 		this.currentCredit = currentCredit;
 	}
 

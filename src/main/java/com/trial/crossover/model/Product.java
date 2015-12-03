@@ -20,14 +20,14 @@ public class Product {
 	@Column(name = "product_id")
 	private Long id;
 
-	@Column(name = "product_description")
+	@Column(name = "product_description", nullable = false)
 	private String description;
 
-	@Column(name = "product_price")
-	private float price;
+	@Column(name = "product_price", nullable = false)
+	private Float price;
 
-	@Column(name = "product_quantity")
-	private int quantity;
+	@Column(name = "product_quantity", nullable = false)
+	private Integer quantity;
 
 	public Long getId() {
 		return id;
@@ -45,19 +45,19 @@ public class Product {
 		this.description = description;
 	}
 
-	public float getPrice() {
+	public Float getPrice() {
 		return price;
 	}
 
-	public void setPrice(float price) {
+	public void setPrice(Float price) {
 		this.price = price;
 	}
 
-	public int getQuantity() {
+	public Integer getQuantity() {
 		return quantity;
 	}
 
-	public void setQuantity(int quantity) {
+	public void setQuantity(Integer quantity) {
 		this.quantity = quantity;
 	}
 }
