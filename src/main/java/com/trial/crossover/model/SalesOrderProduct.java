@@ -19,10 +19,10 @@ public class SalesOrderProduct implements com.trial.crossover.dto.Entity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "sales_orders_products_id")
+	@Column(name = "sales_order_product_id")
 	private Long id;
 
-	@Column(name = "sales_orders_products_quantity")
+	@Column(name = "sales_order_product_quantity")
 	private int productQuantity;
 
 	@ManyToOne

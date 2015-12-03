@@ -7,6 +7,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -31,7 +32,11 @@ public class SalesOrder implements com.trial.crossover.dto.Entity {
 	@Column(name = "sales_order_total_price")
 	private float totalPrice;
 
-	@OneToMany(fetch = FetchType.LAZY)
+	@OneToMany(fetch = FetchType.LAZY, orphanRemoval = true)
+	@JoinTable(name = "order_products", joinColumns = {
+			@JoinColumn(name = "order_id", nullable = false)}, inverseJoinColumns = {
+			@JoinColumn(name = "order_product_id", nullable = false)
+	})
 	private List<SalesOrderProduct> orderProducts;
 
 	@ManyToOne

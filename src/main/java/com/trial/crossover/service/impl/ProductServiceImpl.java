@@ -25,6 +25,7 @@ class ProductServiceImpl implements ProductService {
 	@Autowired
 	private GenericTransformer<ProductDTO, Product> transformer;
 
+	@Override
 	@Transactional(readOnly = true)
 	public List<ProductDTO> all() {
 		List<Product> products = productDAO.all();
@@ -37,11 +38,17 @@ class ProductServiceImpl implements ProductService {
 		return dtos;
 	}
 
+	@Override
 	@Transactional(readOnly = true)
 	public ProductDTO get(long id) {
-		return transformer.getDTOFromModel(productDAO.get(id), ProductDTO.class);
+		Product p = productDAO.get(id);
+		if (p == null) {
+			return null;
+		}
+		return transformer.getDTOFromModel(p, ProductDTO.class);
 	}
 
+	@Override
 	@Transactional
 	public ProductDTO create(ProductDTO dto) {
 		Product p = transformer.getModelFromDTO(dto, Product.class);
@@ -50,6 +57,7 @@ class ProductServiceImpl implements ProductService {
 
 	}
 
+	@Override
 	@Transactional
 	public ProductDTO update(ProductDTO dto) {
 		Product p = productDAO.get(dto.getId());
@@ -60,7 +68,7 @@ class ProductServiceImpl implements ProductService {
 
 		p.setDescription(dto.getDescription());
 		p.setPrice(dto.getPrice());
-		p.setQuantity(dto.getQuantity());
+		p.setAvailableQuantity(dto.getAvailableQuantity());
 		p = productDAO.update(p);
 
 		return transformer.getDTOFromModel(p, ProductDTO.class);

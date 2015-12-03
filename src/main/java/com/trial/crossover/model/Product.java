@@ -26,8 +26,8 @@ public class Product implements com.trial.crossover.dto.Entity {
 	@Column(name = "product_price", nullable = false)
 	private Float price;
 
-	@Column(name = "product_quantity", nullable = false)
-	private Integer quantity;
+	@Column(name = "product_available_quantity", nullable = false)
+	private Integer availableQuantity;
 
 	public Long getId() {
 		return id;
@@ -53,11 +53,11 @@ public class Product implements com.trial.crossover.dto.Entity {
 		this.price = price;
 	}
 
-	public Integer getQuantity() {
-		return quantity;
+	public Integer getAvailableQuantity() {
+		return availableQuantity;
 	}
 
-	public void setQuantity(Integer quantity) {
-		this.quantity = quantity;
+	public void setAvailableQuantity(Integer availableQuantity) {
+		this.availableQuantity = availableQuantity;
 	}
 }

@@ -1,45 +1,18 @@
 package com.trial.crossover.dto;
 
-import com.trial.crossover.model.Customer;
-import com.trial.crossover.model.SalesOrderProduct;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
 import java.util.List;
 
 /**
  * Created by: dambros
  * Date: 12/2/2015
  */
-@Entity
-@Table(name = "sales_orders")
-public class SalesOrderDTO implements com.trial.crossover.dto.Entity {
+public class SalesOrderDTO implements DTO {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "sales_order_id")
 	private Long id;
-
-	@Column(name = "sales_order_number")
-	private long orderNumber;
-
-	@Column(name = "sales_order_total_price")
-	private float totalPrice;
-
-	@OneToMany(fetch = FetchType.LAZY)
-	private List<SalesOrderProduct> orderProducts;
-
-	@ManyToOne
-	@JoinColumn(name = "sales_order_customer_id")
-	private Customer customer;
+	private Long orderNumber;
+	private Float totalPrice;
+	private List<SalesOrderProductDTO> orderProducts;
+	private CustomerDTO customer;
 
 	public Long getId() {
 		return id;
@@ -49,35 +22,35 @@ public class SalesOrderDTO implements com.trial.crossover.dto.Entity {
 		this.id = id;
 	}
 
-	public long getOrderNumber() {
+	public Long getOrderNumber() {
 		return orderNumber;
 	}
 
-	public void setOrderNumber(long orderNumber) {
+	public void setOrderNumber(Long orderNumber) {
 		this.orderNumber = orderNumber;
 	}
 
-	public float getTotalPrice() {
+	public Float getTotalPrice() {
 		return totalPrice;
 	}
 
-	public void setTotalPrice(float totalPrice) {
+	public void setTotalPrice(Float totalPrice) {
 		this.totalPrice = totalPrice;
 	}
 
-	public List<SalesOrderProduct> getOrderProducts() {
+	public List<SalesOrderProductDTO> getOrderProducts() {
 		return orderProducts;
 	}
 
-	public void setOrderProducts(List<SalesOrderProduct> orderProducts) {
+	public void setOrderProducts(List<SalesOrderProductDTO> orderProducts) {
 		this.orderProducts = orderProducts;
 	}
 
-	public Customer getCustomer() {
+	public CustomerDTO getCustomer() {
 		return customer;
 	}
 
-	public void setCustomer(Customer customer) {
+	public void setCustomer(CustomerDTO customer) {
 		this.customer = customer;
 	}
 }

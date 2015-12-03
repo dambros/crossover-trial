@@ -19,7 +19,7 @@ public class ProductDTO implements DTO {
 	private Float price;
 
 	@NotNull(message = "{generic.not.null}")
-	private Integer quantity;
+	private Integer availableQuantity;
 
 	public Long getId() {
 		return id;
@@ -42,18 +42,23 @@ public class ProductDTO implements DTO {
 	}
 
 	public void setPrice(Float price) {
-		if (price != null && price > 0) {
+		if (price != null && price < 0) {
+			this.price = 0f;
+		} else {
 			this.price = price;
 		}
 	}
 
-	public Integer getQuantity() {
-		return quantity;
+	public Integer getAvailableQuantity() {
+		return availableQuantity;
 	}
 
-	public void setQuantity(Integer quantity) {
-		if (quantity != null && quantity > 0) {
-			this.quantity = quantity;
+	public void setAvailableQuantity(Integer availableQuantity) {
+		if (availableQuantity != null && availableQuantity < 0) {
+			this.availableQuantity = 0;
+		} else {
+			this.availableQuantity = availableQuantity;
 		}
 	}
+
 }

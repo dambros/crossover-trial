@@ -57,8 +57,12 @@ public class ProductController {
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	@ResponseBody
 	public ResponseEntity get(@PathVariable long id) {
-		return new ResponseEntity(productService.get(id), HttpStatus.OK);
+		ProductDTO dto = productService.get(id);
 
+		if (dto == null) {
+			return new ResponseEntity(new FieldErrorDTO("id", "invalid value"), HttpStatus.BAD_REQUEST);
+		}
+		return new ResponseEntity(dto, HttpStatus.OK);
 	}
 
 }

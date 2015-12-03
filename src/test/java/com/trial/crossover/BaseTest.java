@@ -60,13 +60,13 @@ public abstract class BaseTest {
 		p1 = new ProductDTO();
 		p1.setDescription("description 1");
 		p1.setPrice(10f);
-		p1.setQuantity(100);
+		p1.setAvailableQuantity(100);
 		p1 = productService.create(p1);
 
 		p2 = new ProductDTO();
 		p2.setDescription("description 2");
 		p2.setPrice(100.50f);
-		p2.setQuantity(100);
+		p2.setAvailableQuantity(100);
 		p2 = productService.create(p2);
 
 		//adding some customers

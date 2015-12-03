@@ -1,6 +1,6 @@
 package com.trial.crossover.dao;
 
-import com.trial.crossover.model.Customer;
+import com.trial.crossover.model.SalesOrder;
 
 import java.util.List;
 
@@ -9,8 +9,9 @@ import java.util.List;
  * Date: 12/2/2015
  */
 public interface SalesOrderDAO {
-	List<Customer> all();
-	Customer get(long id);
-	Customer create(Customer Customer);
-	Customer update(Customer customer);
+	List<SalesOrder> all();
+	SalesOrder get(long id);
+	SalesOrder create(SalesOrder salesOrder);
+	SalesOrder update(SalesOrder salesOrder);
+	void delete(long id);
 }

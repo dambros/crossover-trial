@@ -146,6 +146,13 @@ public class CustomerControllerTest extends BaseTest {
 	}
 
 	@org.junit.Test
+	public void test_getCustomerWithInvalidId() throws Exception {
+		mockMvc.perform(get("/customers/{id}", -1))
+				.andExpect(status().isBadRequest())
+				.andExpect(content().contentType("application/json;charset=UTF-8"));
+	}
+
+	@org.junit.Test
 	public void test_updateCustomer() throws Exception {
 		c1.setName("New Customer xxx");
 		c1.setAddress("New Address xxx");

@@ -56,6 +56,12 @@ public class CustomerController {
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	@ResponseBody
 	public ResponseEntity get(@PathVariable long id) {
-		return new ResponseEntity(customerService.get(id), HttpStatus.OK);
+		CustomerDTO dto = customerService.get(id);
+
+		if (dto == null) {
+			return new ResponseEntity(new FieldErrorDTO("id", "invalid value"), HttpStatus.BAD_REQUEST);
+		}
+
+		return new ResponseEntity(dto, HttpStatus.OK);
 	}
 }

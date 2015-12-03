@@ -1,8 +1,8 @@
 package com.trial.crossover.controller;
 
-import com.trial.crossover.dto.CustomerDTO;
 import com.trial.crossover.dto.FieldErrorDTO;
-import com.trial.crossover.service.CustomerService;
+import com.trial.crossover.dto.SalesOrderDTO;
+import com.trial.crossover.service.SalesOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,32 +20,32 @@ import javax.validation.Valid;
  * Date: 12/2/2015
  */
 @Controller
-@RequestMapping(value = "customers", produces = "application/json;charset=UTF-8")
+@RequestMapping(value = "orders", produces = "application/json;charset=UTF-8")
 public class SalesOrderController {
 
 	@Autowired
-	private CustomerService customerService;
+	private SalesOrderService salesOrderService;
 
 	@RequestMapping(value = "/all", method = RequestMethod.GET)
 	@ResponseBody
 	public ResponseEntity all() {
-		return new ResponseEntity(customerService.all(), HttpStatus.OK);
+		return new ResponseEntity(salesOrderService.all(), HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/new", method = RequestMethod.POST)
 	@ResponseBody
-	public ResponseEntity create(@RequestBody @Valid CustomerDTO dto) {
-		return new ResponseEntity(customerService.create(dto), HttpStatus.OK);
+	public ResponseEntity create(@RequestBody @Valid SalesOrderDTO dto) {
+		return new ResponseEntity(salesOrderService.create(dto), HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/update", method = RequestMethod.POST)
 	@ResponseBody
-	public ResponseEntity update(@RequestBody @Valid CustomerDTO dto) {
+	public ResponseEntity update(@RequestBody @Valid SalesOrderDTO dto) {
 		//adding simplistic validation just to avoid being negligent
 		if (dto.getId() == null) {
 			return new ResponseEntity(new FieldErrorDTO("id", "Can't be null"), HttpStatus.BAD_REQUEST);
 		}
-		dto = customerService.update(dto);
+		dto = salesOrderService.update(dto);
 
 		if (dto == null) {
 			return new ResponseEntity(new FieldErrorDTO("id", "invalid value"), HttpStatus.BAD_REQUEST);
@@ -56,6 +56,19 @@ public class SalesOrderController {
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	@ResponseBody
 	public ResponseEntity get(@PathVariable long id) {
-		return new ResponseEntity(customerService.get(id), HttpStatus.OK);
+		SalesOrderDTO dto = salesOrderService.get(id);
+
+		if (dto == null) {
+			return new ResponseEntity(new FieldErrorDTO("id", "invalid value"), HttpStatus.BAD_REQUEST);
+		}
+
+		return new ResponseEntity(dto, HttpStatus.OK);
+	}
+
+	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+	@ResponseBody
+	public ResponseEntity delete(@PathVariable long id) {
+		salesOrderService.delete(id);
+		return new ResponseEntity(HttpStatus.OK);
 	}
 }
