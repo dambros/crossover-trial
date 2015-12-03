@@ -29,4 +29,9 @@ class ProductDAOImpl extends BaseDAO implements ProductDAO {
 		getCurrentSession().save(product);
 		return product;
 	}
+
+	public Product update(Product product) {
+		getCurrentSession().update(product);
+		return product;
+	}
 }

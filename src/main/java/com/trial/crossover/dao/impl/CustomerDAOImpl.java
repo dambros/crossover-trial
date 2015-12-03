@@ -30,4 +30,10 @@ class CustomerDAOImpl extends BaseDAO implements CustomerDAO {
 		getCurrentSession().save(customer);
 		return customer;
 	}
+
+	@Override
+	public Customer update(Customer customer) {
+		getCurrentSession().update(customer);
+		return customer;
+	}
 }

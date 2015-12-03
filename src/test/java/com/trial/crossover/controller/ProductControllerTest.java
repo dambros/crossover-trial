@@ -70,13 +70,13 @@ public class ProductControllerTest extends BaseTest {
 
 		MatcherAssert.assertThat(obj1.get("id").getAsString(), notNullValue());
 		MatcherAssert.assertThat(obj1.get("description").getAsString(), equalTo("description 1"));
-		MatcherAssert.assertThat(obj1.get("price").getAsString(), equalTo("10.0"));
-		MatcherAssert.assertThat(obj1.get("quantity").getAsString(), equalTo("100"));
+		MatcherAssert.assertThat(obj1.get("price").getAsFloat(), equalTo(10.0f));
+		MatcherAssert.assertThat(obj1.get("quantity").getAsInt(), equalTo(100));
 
 		MatcherAssert.assertThat(obj2.get("id").getAsString(), notNullValue());
 		MatcherAssert.assertThat(obj2.get("description").getAsString(), equalTo("description 2"));
-		MatcherAssert.assertThat(obj2.get("price").getAsString(), equalTo("100.5"));
-		MatcherAssert.assertThat(obj2.get("quantity").getAsString(), equalTo("100"));
+		MatcherAssert.assertThat(obj2.get("price").getAsFloat(), equalTo(100.5f));
+		MatcherAssert.assertThat(obj2.get("quantity").getAsInt(), equalTo(100));
 	}
 
 	@org.junit.Test
@@ -106,37 +106,33 @@ public class ProductControllerTest extends BaseTest {
 		MatcherAssert.assertThat(currentProducts, greaterThan(previousProducts));
 		MatcherAssert.assertThat(obj.get("id").getAsString(), notNullValue());
 		MatcherAssert.assertThat(obj.get("description").getAsString(), equalTo("new Prod"));
-		MatcherAssert.assertThat(obj.get("price").getAsString(), equalTo("66.66"));
-		MatcherAssert.assertThat(obj.get("quantity").getAsString(), equalTo("99"));
+		MatcherAssert.assertThat(obj.get("price").getAsFloat(), equalTo(66.66f));
+		MatcherAssert.assertThat(obj.get("quantity").getAsInt(), equalTo(99));
 	}
 
 	@org.junit.Test
 	public void test_createNewProductWithMissingFields() throws Exception {
-
-		ProductDTO prod = new ProductDTO();
-		prod.setPrice(66.66f);
-		prod.setQuantity(99);
-		String json = gson.toJson(prod);
+		p1.setId(null);
+		p1.setDescription(null);
+		String json = gson.toJson(p1);
 
 		mockMvc.perform(post("/products/new")
 				.contentType(MediaType.APPLICATION_JSON).content(json))
 				.andExpect(status().isBadRequest())
 				.andExpect(content().contentType("application/json;charset=UTF-8"));
 
-		ProductDTO prod2 = new ProductDTO();
-		prod2.setDescription("new Prod");
-		prod2.setQuantity(99);
-		String json2 = gson.toJson(prod2);
+		p1.setDescription("new Prod");
+		p1.setQuantity(null);
+		String json2 = gson.toJson(p1);
 
 		mockMvc.perform(post("/products/new")
 				.contentType(MediaType.APPLICATION_JSON).content(json2))
 				.andExpect(status().isBadRequest())
 				.andExpect(content().contentType("application/json;charset=UTF-8"));
 
-		ProductDTO prod3 = new ProductDTO();
-		prod3.setDescription("new Prod");
-		prod3.setPrice(66.66f);
-		String json3 = gson.toJson(prod3);
+		p1.setQuantity(100);
+		p1.setPrice(null);
+		String json3 = gson.toJson(p1);
 
 		mockMvc.perform(post("/products/new")
 				.contentType(MediaType.APPLICATION_JSON).content(json3))
@@ -153,8 +149,65 @@ public class ProductControllerTest extends BaseTest {
 
 		MatcherAssert.assertThat(obj.get("id").getAsString(), equalTo(p1.getId().toString()));
 		MatcherAssert.assertThat(obj.get("description").getAsString(), equalTo(p1.getDescription()));
-		MatcherAssert.assertThat(obj.get("price").getAsString(), equalTo(String.valueOf(p1.getPrice())));
-		MatcherAssert.assertThat(obj.get("quantity").getAsString(), equalTo(String.valueOf(p1.getQuantity())));
+		MatcherAssert.assertThat(obj.get("price").getAsFloat(), equalTo(p1.getPrice()));
+		MatcherAssert.assertThat(obj.get("quantity").getAsInt(), equalTo(p1.getQuantity()));
+	}
+
+	@org.junit.Test
+	public void test_updateProduct() throws Exception {
+		p1.setDescription("new update");
+		p1.setPrice(111f);
+		p1.setQuantity(22);
+		String json = gson.toJson(p1);
+
+		JsonObject obj = gson.fromJson(mockMvc.perform(post("/products/update")
+				.contentType(MediaType.APPLICATION_JSON).content(json))
+				.andExpect(status().isOk())
+				.andExpect(content().contentType("application/json;charset=UTF-8"))
+				.andReturn().getResponse().getContentAsString(), JsonObject.class);
+
+		MatcherAssert.assertThat(obj.get("id").getAsLong(), equalTo(p1.getId()));
+		MatcherAssert.assertThat(obj.get("description").getAsString(), equalTo("new update"));
+		MatcherAssert.assertThat(obj.get("price").getAsFloat(), equalTo(111f));
+		MatcherAssert.assertThat(obj.get("quantity").getAsInt(), equalTo(22));
+	}
+
+	@org.junit.Test
+	public void test_updateProductWithMissingFields() throws Exception {
+		p1.setDescription(null);
+		String json = gson.toJson(p1);
+
+		mockMvc.perform(post("/products/update")
+				.contentType(MediaType.APPLICATION_JSON).content(json))
+				.andExpect(status().isBadRequest())
+				.andExpect(content().contentType("application/json;charset=UTF-8"));
+
+		p1.setDescription("new Prod");
+		p1.setQuantity(null);
+		String json2 = gson.toJson(p1);
+
+		mockMvc.perform(post("/products/update")
+				.contentType(MediaType.APPLICATION_JSON).content(json2))
+				.andExpect(status().isBadRequest())
+				.andExpect(content().contentType("application/json;charset=UTF-8"));
+
+		p1.setQuantity(100);
+		p1.setPrice(null);
+		String json3 = gson.toJson(p1);
+
+		mockMvc.perform(post("/products/update")
+				.contentType(MediaType.APPLICATION_JSON).content(json3))
+				.andExpect(status().isBadRequest())
+				.andExpect(content().contentType("application/json;charset=UTF-8"));
+
+		p1.setPrice(66f);
+		p1.setId(null);
+		String json4 = gson.toJson(p1);
+
+		mockMvc.perform(post("/products/update")
+				.contentType(MediaType.APPLICATION_JSON).content(json4))
+				.andExpect(status().isBadRequest())
+				.andExpect(content().contentType("application/json;charset=UTF-8"));
 	}
 
 }

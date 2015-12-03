@@ -50,4 +50,11 @@ class ProductServiceImpl implements ProductService {
 
 	}
 
+	@Transactional
+	public ProductDTO update(ProductDTO dto) {
+		Product p = transformer.getModelFromDTO(dto, Product.class);
+		p = productDAO.update(p);
+		return transformer.getDTOFromModel(p, ProductDTO.class);
+	}
+
 }

@@ -1,8 +1,11 @@
 package com.trial.crossover.controller;
 
+import com.trial.crossover.dto.FieldErrorDTO;
 import com.trial.crossover.dto.ProductDTO;
 import com.trial.crossover.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -11,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.validation.Valid;
-import java.util.List;
 
 /**
  * Created by: dambros
@@ -26,20 +28,31 @@ public class ProductController {
 
 	@RequestMapping(value = "/all", method = RequestMethod.GET)
 	@ResponseBody
-	public List<ProductDTO> all() {
-		return productService.all();
+	public ResponseEntity all() {
+		return new ResponseEntity(productService.all(), HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/new", method = RequestMethod.POST)
 	@ResponseBody
-	public ProductDTO create(@RequestBody @Valid ProductDTO dto) {
-		return productService.create(dto);
+	public ResponseEntity create(@RequestBody @Valid ProductDTO dto) {
+		return new ResponseEntity(productService.create(dto), HttpStatus.OK);
+	}
+
+	@RequestMapping(value = "/update", method = RequestMethod.POST)
+	@ResponseBody
+	public ResponseEntity update(@RequestBody @Valid ProductDTO dto) {
+		//adding simplistic validation just to avoid being negligent
+		if (dto.getId() == null) {
+			return new ResponseEntity(new FieldErrorDTO("id", "Can't be null"), HttpStatus.BAD_REQUEST);
+		}
+		return new ResponseEntity(productService.update(dto), HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	@ResponseBody
-	public ProductDTO get(@PathVariable long id) {
-		return productService.get(id);
+	public ResponseEntity get(@PathVariable long id) {
+		return new ResponseEntity(productService.get(id), HttpStatus.OK);
+
 	}
 
 }

@@ -15,7 +15,7 @@ public class CustomerDTO {
 	private Long id;
 	private String phone1;
 	private String phone2;
-	private Long currentCredit;
+	private Float currentCredit;
 
 	@NotEmpty(message = "{generic.not.empty}")
 	private String name;
@@ -24,7 +24,7 @@ public class CustomerDTO {
 	private String address;
 
 	@NotNull(message = "{generic.not.null}")
-	private Long creditLimit;
+	private Float creditLimit;
 
 	public Long getId() {
 		return id;
@@ -66,19 +66,19 @@ public class CustomerDTO {
 		this.phone2 = phone2;
 	}
 
-	public Long getCreditLimit() {
-		return creditLimit;
-	}
-
-	public void setCreditLimit(Long creditLimit) {
-		this.creditLimit = creditLimit;
-	}
-
-	public Long getCurrentCredit() {
+	public Float getCurrentCredit() {
 		return currentCredit;
 	}
 
-	public void setCurrentCredit(Long currentCredit) {
+	public void setCurrentCredit(Float currentCredit) {
 		this.currentCredit = currentCredit;
+	}
+
+	public Float getCreditLimit() {
+		return creditLimit;
+	}
+
+	public void setCreditLimit(Float creditLimit) {
+		this.creditLimit = creditLimit;
 	}
 }

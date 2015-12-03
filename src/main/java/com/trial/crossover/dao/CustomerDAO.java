@@ -12,4 +12,5 @@ public interface CustomerDAO {
 	List<Customer> all();
 	Customer get(long id);
 	Customer create(Customer Customer);
+	Customer update(Customer customer);
 }
