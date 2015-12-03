@@ -86,8 +86,6 @@ public class DataConfig {
 		properties.put(PROPERTY_NAME_HIBERNATE_DIALECT, "org.hibernate.dialect.HSQLDialect");
 		properties.put(PROPERTY_NAME_HIBERNATE_SHOW_SQL, "false");
 		properties.put(PROPERTY_NAME_HIBERNATE_HBM2DDL_AUTO, "create-drop");
-//		properties.put(PROPERTY_NAME_HIBERNATE_HBM2DDL_IMPORT_FILES_EXTRACTOR, "org.hibernate.tool.hbm2ddl.MultipleLinesSqlCommandExtractor");
-//		properties.put(PROPERTY_NAME_HIBERNATE_HBM2DDL_IMPORT_FILES, env.getRequiredProperty(PROPERTY_NAME_SERVER_IMPORT_SCRIPT));
 		return properties;
 	}
 

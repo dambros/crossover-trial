@@ -13,4 +13,5 @@ public interface ProductDAO {
 	Product get(long id);
 	Product create(Product product);
 	Product update(Product product);
+	void batchUpdate(List<Product> products);
 }

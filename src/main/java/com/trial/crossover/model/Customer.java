@@ -36,10 +36,10 @@ public class Customer implements com.trial.crossover.dto.Entity {
 	private String phone2;
 
 	@Column(name = "customer_credit_limit", nullable = false)
-	private Float creditLimit;
+	private float creditLimit;
 
 	@Column(name = "customer_current_credit")
-	private Float currentCredit;
+	private float currentCredit;
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "customer")
 	private List<SalesOrder> orders;
@@ -84,19 +84,19 @@ public class Customer implements com.trial.crossover.dto.Entity {
 		this.phone2 = phone2;
 	}
 
-	public Float getCreditLimit() {
+	public float getCreditLimit() {
 		return creditLimit;
 	}
 
-	public void setCreditLimit(Float creditLimit) {
+	public void setCreditLimit(float creditLimit) {
 		this.creditLimit = creditLimit;
 	}
 
-	public Float getCurrentCredit() {
+	public float getCurrentCredit() {
 		return currentCredit;
 	}
 
-	public void setCurrentCredit(Float currentCredit) {
+	public void setCurrentCredit(float currentCredit) {
 		this.currentCredit = currentCredit;
 	}
 

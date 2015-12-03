@@ -1,13 +1,19 @@
 package com.trial.crossover.dto;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * Created by: dambros
  * Date: 12/2/2015
  */
-public class SalesOrderProductDTO implements DTO {
+public class SalesOrderProductEditionDTO implements DTO {
 
 	private Long id;
-	private ProductDTO product;
+
+	@NotNull(message = "{generic.not.null}")
+	private Long product;
+
+	@NotNull(message = "{generic.not.null}")
 	private Integer productQuantity;
 
 	public Long getId() {
@@ -28,11 +34,11 @@ public class SalesOrderProductDTO implements DTO {
 		}
 	}
 
-	public ProductDTO getProduct() {
+	public Long getProduct() {
 		return product;
 	}
 
-	public void setProduct(ProductDTO product) {
+	public void setProduct(Long product) {
 		this.product = product;
 	}
 }

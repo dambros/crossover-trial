@@ -18,7 +18,7 @@ class SalesOrderDAOImpl extends BaseDAO implements SalesOrderDAO {
 
 	@Override
 	public List<SalesOrder> all() {
-		Query query = getCurrentSession().createQuery("FROM SalesOrder s LEFT JOIN FETCH s.orderProducts p");
+		Query query = getCurrentSession().createQuery("FROM SalesOrder s LEFT JOIN FETCH s.orderProducts p ORDER BY s.id ASC");
 		return (List<SalesOrder>) query.list();
 	}
 

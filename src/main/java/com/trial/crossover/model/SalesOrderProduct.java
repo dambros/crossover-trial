@@ -1,5 +1,6 @@
 package com.trial.crossover.model;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -25,7 +26,7 @@ public class SalesOrderProduct implements com.trial.crossover.dto.Entity {
 	@Column(name = "sales_order_product_quantity")
 	private int productQuantity;
 
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "product_id")
 	private Product product;
 

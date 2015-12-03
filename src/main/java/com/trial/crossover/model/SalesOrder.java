@@ -1,5 +1,6 @@
 package com.trial.crossover.model;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -26,13 +27,13 @@ public class SalesOrder implements com.trial.crossover.dto.Entity {
 	@Column(name = "sales_order_id")
 	private Long id;
 
-	@Column(name = "sales_order_number")
+	@Column(name = "sales_order_number", nullable = false)
 	private long orderNumber;
 
 	@Column(name = "sales_order_total_price")
 	private float totalPrice;
 
-	@OneToMany(fetch = FetchType.LAZY, orphanRemoval = true)
+	@OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
 	@JoinTable(name = "order_products", joinColumns = {
 			@JoinColumn(name = "order_id", nullable = false)}, inverseJoinColumns = {
 			@JoinColumn(name = "order_product_id", nullable = false)
@@ -40,7 +41,7 @@ public class SalesOrder implements com.trial.crossover.dto.Entity {
 	private List<SalesOrderProduct> orderProducts;
 
 	@ManyToOne
-	@JoinColumn(name = "sales_order_customer_id")
+	@JoinColumn(name = "sales_order_customer_id", nullable = false)
 	private Customer customer;
 
 	public Long getId() {

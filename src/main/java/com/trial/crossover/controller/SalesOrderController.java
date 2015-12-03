@@ -1,6 +1,7 @@
 package com.trial.crossover.controller;
 
 import com.trial.crossover.dto.FieldErrorDTO;
+import com.trial.crossover.dto.SalesOrderEditionDTO;
 import com.trial.crossover.dto.SalesOrderDTO;
 import com.trial.crossover.service.SalesOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 
 /**
  * Created by: dambros
@@ -34,23 +36,25 @@ public class SalesOrderController {
 
 	@RequestMapping(value = "/new", method = RequestMethod.POST)
 	@ResponseBody
-	public ResponseEntity create(@RequestBody @Valid SalesOrderDTO dto) {
+	public ResponseEntity create(@RequestBody @Valid SalesOrderEditionDTO dto) {
 		return new ResponseEntity(salesOrderService.create(dto), HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/update", method = RequestMethod.POST)
 	@ResponseBody
-	public ResponseEntity update(@RequestBody @Valid SalesOrderDTO dto) {
+	public ResponseEntity update(@RequestBody @Valid SalesOrderEditionDTO dto) {
 		//adding simplistic validation just to avoid being negligent
 		if (dto.getId() == null) {
 			return new ResponseEntity(new FieldErrorDTO("id", "Can't be null"), HttpStatus.BAD_REQUEST);
 		}
-		dto = salesOrderService.update(dto);
 
-		if (dto == null) {
-			return new ResponseEntity(new FieldErrorDTO("id", "invalid value"), HttpStatus.BAD_REQUEST);
+		Object obj = salesOrderService.update(dto);
+
+		if (obj instanceof ArrayList) {
+			return new ResponseEntity(obj, HttpStatus.BAD_REQUEST);
 		}
-		return new ResponseEntity(dto, HttpStatus.OK);
+
+		return new ResponseEntity(obj, HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)

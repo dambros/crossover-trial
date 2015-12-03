@@ -35,7 +35,7 @@ public class ExceptionHandler {
 		return processFieldErrors(fieldErrors);
 	}
 
-	private ValidationErrorDTO processFieldErrors(List<FieldError> fieldErrors) {
+	private ValidationErrorDTO  processFieldErrors(List<FieldError> fieldErrors) {
 		ValidationErrorDTO dto = new ValidationErrorDTO();
 
 		for (FieldError fieldError : fieldErrors) {

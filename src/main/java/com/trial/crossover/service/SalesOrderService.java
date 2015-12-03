@@ -1,5 +1,6 @@
 package com.trial.crossover.service;
 
+import com.trial.crossover.dto.SalesOrderEditionDTO;
 import com.trial.crossover.dto.SalesOrderDTO;
 
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.List;
 public interface SalesOrderService {
 	List<SalesOrderDTO> all();
 	SalesOrderDTO get(long id);
-	SalesOrderDTO create(SalesOrderDTO dto);
-	SalesOrderDTO update(SalesOrderDTO dto);
+	Object create(SalesOrderEditionDTO dto);
+	Object update(SalesOrderEditionDTO dto);
 	void delete(long id);
 }

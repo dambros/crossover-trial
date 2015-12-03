@@ -38,4 +38,8 @@ class ProductDAOImpl extends BaseDAO implements ProductDAO {
 		getCurrentSession().update(product);
 		return product;
 	}
+
+	public void batchUpdate(List<Product> products) {
+		getCurrentSession().update(products);
+	}
 }
