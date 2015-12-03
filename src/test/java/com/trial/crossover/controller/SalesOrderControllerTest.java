@@ -81,6 +81,8 @@ public class SalesOrderControllerTest extends BaseTest {
 
 	@org.junit.Test
 	public void test_createNewSalesOrder() throws Exception {
+		c1 = customerService.get(c1.getId());
+
 		int previousOrders = gson.fromJson(mockMvc.perform(get("/orders/all"))
 				.andExpect(status().isOk())
 				.andExpect(content().contentType("application/json;charset=UTF-8"))
@@ -113,8 +115,6 @@ public class SalesOrderControllerTest extends BaseTest {
 				.andExpect(content().contentType("application/json;charset=UTF-8"))
 				.andReturn().getResponse().getContentAsString(), JsonArray.class).size();
 
-		p1 = productService.get(p1.getId());
-
 		MatcherAssert.assertThat(currentOrders, greaterThan(previousOrders));
 		MatcherAssert.assertThat(obj.get("id").getAsString(), notNullValue());
 		MatcherAssert.assertThat(obj.get("orderNumber").getAsLong(), equalTo(d.getOrderNumber()));
@@ -122,7 +122,14 @@ public class SalesOrderControllerTest extends BaseTest {
 		MatcherAssert.assertThat(orderProd1.get("id").getAsLong(), notNullValue());
 		MatcherAssert.assertThat(orderProd1.get("productQuantity").getAsInt(), equalTo(prods.get(0).getProductQuantity()));
 		MatcherAssert.assertThat(prod1.get("id").getAsLong(), equalTo(p1.getId()));
-		MatcherAssert.assertThat(prod1.get("availableQuantity").getAsInt(), equalTo(p1.getAvailableQuantity()));
+		MatcherAssert.assertThat(prod1.get("availableQuantity").getAsInt(), equalTo(p1.getAvailableQuantity() - 3));
+
+		JsonObject customer = obj.get("customer").getAsJsonObject();
+		MatcherAssert.assertThat(customer.get("id").getAsLong(), equalTo(c1.getId()));
+
+		//check customer credit
+		MatcherAssert.assertThat(customer.get("currentCredit").getAsFloat(), equalTo(c1.getCurrentCredit() + d.getTotalPrice()));
+		MatcherAssert.assertThat(customer.get("creditLimit").getAsFloat(), equalTo(c1.getCreditLimit() - d.getTotalPrice()));
 	}
 
 	@org.junit.Test
