@@ -5,7 +5,6 @@ import com.google.gson.JsonObject;
 import com.trial.crossover.BaseTest;
 import com.trial.crossover.dto.CustomerDTO;
 import org.hamcrest.MatcherAssert;
-import org.junit.After;
 import org.junit.Before;
 import org.springframework.http.MediaType;
 
@@ -29,12 +28,6 @@ public class CustomerControllerTest extends BaseTest {
 		super.init();
 	}
 
-	@Override
-	@After
-	public void clean() {
-		super.clean();
-	}
-
 	@org.junit.Test
 	public void test_getAllCustomerss() throws Exception {
 		JsonArray array = gson.fromJson(mockMvc.perform(get("/customers/all"))
@@ -47,20 +40,20 @@ public class CustomerControllerTest extends BaseTest {
 
 		MatcherAssert.assertThat(array.size(), equalTo(2));
 
-		MatcherAssert.assertThat(obj1.get("id").getAsString(), notNullValue());
-		MatcherAssert.assertThat(obj1.get("name").getAsString(), equalTo("Customer1"));
-		MatcherAssert.assertThat(obj1.get("address").getAsString(), equalTo("Address1"));
-		MatcherAssert.assertThat(obj1.get("phone1").getAsString(), equalTo("123456789"));
-		MatcherAssert.assertThat(obj1.get("phone2").getAsString(), equalTo("123456789"));
-		MatcherAssert.assertThat(obj1.get("creditLimit").getAsFloat(), equalTo(1000.55f));
+		MatcherAssert.assertThat(obj1.get("id").getAsLong(), equalTo(c1.getId()));
+		MatcherAssert.assertThat(obj1.get("name").getAsString(), equalTo(c1.getName()));
+		MatcherAssert.assertThat(obj1.get("address").getAsString(), equalTo(c1.getAddress()));
+		MatcherAssert.assertThat(obj1.get("phone1").getAsString(), equalTo(c1.getPhone1()));
+		MatcherAssert.assertThat(obj1.get("phone2").getAsString(), equalTo(c1.getPhone2()));
+		MatcherAssert.assertThat(obj1.get("creditLimit").getAsFloat(), equalTo(c1.getCreditLimit()));
 		MatcherAssert.assertThat(obj1.has("currentCredit"), equalTo(false));
 
-		MatcherAssert.assertThat(obj2.get("id").getAsString(), notNullValue());
-		MatcherAssert.assertThat(obj2.get("name").getAsString(), equalTo("Customer2"));
-		MatcherAssert.assertThat(obj2.get("address").getAsString(), equalTo("Address2"));
-		MatcherAssert.assertThat(obj2.get("phone1").getAsString(), equalTo("123456789"));
-		MatcherAssert.assertThat(obj2.get("phone2").getAsString(), equalTo("123456789"));
-		MatcherAssert.assertThat(obj2.get("creditLimit").getAsFloat(), equalTo(5000f));
+		MatcherAssert.assertThat(obj2.get("id").getAsLong(), equalTo(c2.getId()));
+		MatcherAssert.assertThat(obj2.get("name").getAsString(), equalTo(c2.getName()));
+		MatcherAssert.assertThat(obj2.get("address").getAsString(), equalTo(c2.getAddress()));
+		MatcherAssert.assertThat(obj2.get("phone1").getAsString(), equalTo(c2.getPhone1()));
+		MatcherAssert.assertThat(obj2.get("phone2").getAsString(), equalTo(c2.getPhone2()));
+		MatcherAssert.assertThat(obj2.get("creditLimit").getAsFloat(), equalTo(c2.getCreditLimit()));
 		MatcherAssert.assertThat(obj2.has("currentCredit"), equalTo(false));
 	}
 
@@ -92,11 +85,11 @@ public class CustomerControllerTest extends BaseTest {
 
 		MatcherAssert.assertThat(currentCustomers, greaterThan(previousCustomers));
 		MatcherAssert.assertThat(obj.get("id").getAsString(), notNullValue());
-		MatcherAssert.assertThat(obj.get("name").getAsString(), equalTo("New Customer"));
-		MatcherAssert.assertThat(obj.get("address").getAsString(), equalTo("New Address"));
-		MatcherAssert.assertThat(obj.get("phone1").getAsString(), equalTo("111111111"));
-		MatcherAssert.assertThat(obj.get("phone2").getAsString(), equalTo("222222222"));
-		MatcherAssert.assertThat(obj.get("creditLimit").getAsFloat(), equalTo(123f));
+		MatcherAssert.assertThat(obj.get("name").getAsString(), equalTo(c.getName()));
+		MatcherAssert.assertThat(obj.get("address").getAsString(), equalTo(c.getAddress()));
+		MatcherAssert.assertThat(obj.get("phone1").getAsString(), equalTo(c.getPhone1()));
+		MatcherAssert.assertThat(obj.get("phone2").getAsString(), equalTo(c.getPhone2()));
+		MatcherAssert.assertThat(obj.get("creditLimit").getAsFloat(), equalTo(c.getCreditLimit()));
 		MatcherAssert.assertThat(obj.has("currentCredit"), equalTo(false));
 	}
 
@@ -137,7 +130,7 @@ public class CustomerControllerTest extends BaseTest {
 				.andExpect(content().contentType("application/json;charset=UTF-8"))
 				.andReturn().getResponse().getContentAsString(), JsonObject.class);
 
-		MatcherAssert.assertThat(obj.get("id").getAsString(), equalTo(c1.getId().toString()));
+		MatcherAssert.assertThat(obj.get("id").getAsLong(), equalTo(c1.getId()));
 		MatcherAssert.assertThat(obj.get("name").getAsString(), equalTo(c1.getName()));
 		MatcherAssert.assertThat(obj.get("address").getAsString(), equalTo(c1.getAddress()));
 		MatcherAssert.assertThat(obj.get("phone1").getAsString(), equalTo(c1.getPhone1()));

@@ -37,7 +37,13 @@ public class SalesOrderController {
 	@RequestMapping(value = "/new", method = RequestMethod.POST)
 	@ResponseBody
 	public ResponseEntity create(@RequestBody @Valid SalesOrderEditionDTO dto) {
-		return new ResponseEntity(salesOrderService.create(dto), HttpStatus.OK);
+		Object obj = salesOrderService.create(dto);
+
+		if (obj instanceof ArrayList) {
+			return new ResponseEntity(obj, HttpStatus.BAD_REQUEST);
+		}
+
+		return new ResponseEntity(obj, HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/update", method = RequestMethod.POST)

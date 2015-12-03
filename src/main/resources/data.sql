@@ -37,4 +37,3 @@ VALUES ((SELECT sales_order_id FROM sales_orders WHERE sales_order_number = 100)
 INSERT INTO order_products(order_id, order_product_id)
 VALUES ((SELECT sales_order_id FROM sales_orders WHERE sales_order_number = 101),
         (SELECT sales_order_product_id FROM sales_orders_products WHERE sales_order_product_quantity = 5));
-

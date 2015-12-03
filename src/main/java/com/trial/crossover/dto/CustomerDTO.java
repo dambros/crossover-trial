@@ -70,6 +70,10 @@ public class CustomerDTO implements DTO {
 		return currentCredit;
 	}
 
+	public void setCurrentCredit(Float currentCredit) {
+		this.currentCredit = currentCredit;
+	}
+
 	public Float getCreditLimit() {
 		return creditLimit;
 	}

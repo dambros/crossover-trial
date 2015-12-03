@@ -3,9 +3,12 @@ package com.trial.crossover.service.impl;
 import com.trial.crossover.dao.CustomerDAO;
 import com.trial.crossover.dao.ProductDAO;
 import com.trial.crossover.dao.SalesOrderDAO;
+import com.trial.crossover.dto.CustomerDTO;
 import com.trial.crossover.dto.FieldErrorDTO;
+import com.trial.crossover.dto.ProductDTO;
 import com.trial.crossover.dto.SalesOrderDTO;
 import com.trial.crossover.dto.SalesOrderEditionDTO;
+import com.trial.crossover.dto.SalesOrderProductDTO;
 import com.trial.crossover.model.Customer;
 import com.trial.crossover.model.Product;
 import com.trial.crossover.model.SalesOrder;
@@ -17,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -36,7 +40,10 @@ public class SalesOrderServiceImpl implements SalesOrderService {
 	private ProductDAO productDAO;
 
 	@Autowired
-	private GenericTransformer<SalesOrderDTO, SalesOrder> transformer;
+	private GenericTransformer<CustomerDTO, Customer> customerTransformer;
+
+	@Autowired
+	private GenericTransformer<ProductDTO, Product> productTransformer;
 
 	@Override
 	@Transactional(readOnly = true)
@@ -45,7 +52,7 @@ public class SalesOrderServiceImpl implements SalesOrderService {
 		List<SalesOrderDTO> dtos = new ArrayList<>(orders.size());
 
 		for (SalesOrder s : orders) {
-			dtos.add(transformer.getDTOFromModel(s, SalesOrderDTO.class));
+			dtos.add(getOrderDTO(s));
 		}
 
 		return dtos;
@@ -60,7 +67,7 @@ public class SalesOrderServiceImpl implements SalesOrderService {
 			return null;
 		}
 
-		return transformer.getDTOFromModel(s, SalesOrderDTO.class);
+		return getOrderDTO(s);
 	}
 
 	@Override
@@ -76,7 +83,7 @@ public class SalesOrderServiceImpl implements SalesOrderService {
 				s.getProduct().setAvailableQuantity(s.getProduct().getAvailableQuantity() - s.getProductQuantity());
 			}
 
-			return transformer.getDTOFromModel(order, SalesOrderDTO.class);
+			return getOrderDTO(order);
 		}
 
 		//return errors list
@@ -86,17 +93,42 @@ public class SalesOrderServiceImpl implements SalesOrderService {
 	@Override
 	@Transactional
 	public Object update(SalesOrderEditionDTO dto) {
+		SalesOrder order = salesOrderDAO.get(dto.getId());
+
+		if (order == null) {
+			return new ArrayList<>(Arrays.asList(new FieldErrorDTO("id", "invalid value")));
+		}
+
+		List<SalesOrderProduct> previousProducts = order.getOrderProducts();
+		float previousAmount = order.getTotalPrice();
+
 		Object obj = validateBusinessLogic(dto);
 
 		if (obj instanceof SalesOrder) {
-			SalesOrder order = salesOrderDAO.update((SalesOrder) obj);
 
-			//update products quantities
+			for (SalesOrderProduct prod : previousProducts) {
+				//return products to stock
+				prod.getProduct().setAvailableQuantity(prod.getProduct().getAvailableQuantity() + prod.getProductQuantity());
+			}
+
+			//return credit to customer
+			Customer c = order.getCustomer();
+			c.setCreditLimit(c.getCreditLimit() + previousAmount);
+			c.setCurrentCredit(c.getCurrentCredit() - previousAmount);
+
+			order = salesOrderDAO.update((SalesOrder) obj);
+
+//			update new products quantities
 			for (SalesOrderProduct s : order.getOrderProducts()) {
 				s.getProduct().setAvailableQuantity(s.getProduct().getAvailableQuantity() - s.getProductQuantity());
 			}
 
-			return transformer.getDTOFromModel(order, SalesOrderDTO.class);
+			//update new customer credit
+			c.setCurrentCredit(c.getCurrentCredit() + order.getTotalPrice());
+			c.setCreditLimit(c.getCreditLimit() - order.getTotalPrice());
+			customerDAO.update(c);
+
+			return getOrderDTO(order);
 		}
 
 		//return errors list
@@ -161,6 +193,9 @@ public class SalesOrderServiceImpl implements SalesOrderService {
 			return errors;
 		}
 
+		customer.setCurrentCredit(customer.getCurrentCredit() + dto.getTotalPrice());
+		customer.setCreditLimit(customer.getCreditLimit() - dto.getTotalPrice());
+
 		SalesOrder order = new SalesOrder();
 		order.setId(dto.getId());
 		order.setCustomer(customer);
@@ -169,5 +204,24 @@ public class SalesOrderServiceImpl implements SalesOrderService {
 		order.setOrderNumber(dto.getOrderNumber());
 
 		return order;
+	}
+
+	private SalesOrderDTO getOrderDTO(SalesOrder order) {
+		SalesOrderDTO orderDTO = new SalesOrderDTO();
+		orderDTO.setId(order.getId());
+		List<SalesOrderProductDTO> prods = new ArrayList<>(order.getOrderProducts().size());
+		for (SalesOrderProduct p : order.getOrderProducts()) {
+			SalesOrderProductDTO salesDto = new SalesOrderProductDTO();
+			salesDto.setProduct(productTransformer.getDTOFromModel(p.getProduct(), ProductDTO.class));
+			salesDto.setProductQuantity(p.getProductQuantity());
+			salesDto.setId(p.getId());
+			prods.add(salesDto);
+		}
+		orderDTO.setOrderProducts(prods);
+		orderDTO.setTotalPrice(order.getTotalPrice());
+		orderDTO.setOrderNumber(order.getOrderNumber());
+		orderDTO.setCustomer(customerTransformer.getDTOFromModel(order.getCustomer(), CustomerDTO.class));
+
+		return orderDTO;
 	}
 }

@@ -5,7 +5,6 @@ import com.google.gson.JsonObject;
 import com.trial.crossover.BaseTest;
 import com.trial.crossover.dto.ProductDTO;
 import org.hamcrest.MatcherAssert;
-import org.junit.After;
 import org.junit.Before;
 import org.springframework.http.MediaType;
 
@@ -29,12 +28,6 @@ public class ProductControllerTest extends BaseTest {
 		super.init();
 	}
 
-	@Override
-	@After
-	public void clean() {
-		super.clean();
-	}
-
 	@org.junit.Test
 	public void test_getAllProducts() throws Exception {
 		JsonArray array = gson.fromJson(mockMvc.perform(get("/products/all"))
@@ -47,15 +40,15 @@ public class ProductControllerTest extends BaseTest {
 
 		MatcherAssert.assertThat(array.size(), equalTo(2));
 
-		MatcherAssert.assertThat(obj1.get("id").getAsString(), notNullValue());
-		MatcherAssert.assertThat(obj1.get("description").getAsString(), equalTo("description 1"));
-		MatcherAssert.assertThat(obj1.get("price").getAsFloat(), equalTo(10.0f));
-		MatcherAssert.assertThat(obj1.get("availableQuantity").getAsInt(), equalTo(100));
+		MatcherAssert.assertThat(obj1.get("id").getAsLong(), equalTo(p1.getId()));
+		MatcherAssert.assertThat(obj1.get("description").getAsString(), equalTo(p1.getDescription()));
+		MatcherAssert.assertThat(obj1.get("price").getAsFloat(), equalTo(p1.getPrice()));
+		MatcherAssert.assertThat(obj1.get("availableQuantity").getAsInt(), equalTo(p1.getAvailableQuantity()));
 
-		MatcherAssert.assertThat(obj2.get("id").getAsString(), notNullValue());
-		MatcherAssert.assertThat(obj2.get("description").getAsString(), equalTo("description 2"));
-		MatcherAssert.assertThat(obj2.get("price").getAsFloat(), equalTo(100.5f));
-		MatcherAssert.assertThat(obj2.get("availableQuantity").getAsInt(), equalTo(100));
+		MatcherAssert.assertThat(obj2.get("id").getAsLong(), equalTo(p2.getId()));
+		MatcherAssert.assertThat(obj2.get("description").getAsString(), equalTo(p2.getDescription()));
+		MatcherAssert.assertThat(obj2.get("price").getAsFloat(), equalTo(p2.getPrice()));
+		MatcherAssert.assertThat(obj2.get("availableQuantity").getAsInt(), equalTo(p2.getAvailableQuantity()));
 	}
 
 	@org.junit.Test
@@ -84,9 +77,9 @@ public class ProductControllerTest extends BaseTest {
 
 		MatcherAssert.assertThat(currentProducts, greaterThan(previousProducts));
 		MatcherAssert.assertThat(obj.get("id").getAsString(), notNullValue());
-		MatcherAssert.assertThat(obj.get("description").getAsString(), equalTo("new Prod"));
-		MatcherAssert.assertThat(obj.get("price").getAsFloat(), equalTo(66.66f));
-		MatcherAssert.assertThat(obj.get("availableQuantity").getAsInt(), equalTo(99));
+		MatcherAssert.assertThat(obj.get("description").getAsString(), equalTo(prod.getDescription()));
+		MatcherAssert.assertThat(obj.get("price").getAsFloat(), equalTo(prod.getPrice()));
+		MatcherAssert.assertThat(obj.get("availableQuantity").getAsInt(), equalTo(prod.getAvailableQuantity()));
 	}
 
 	@org.junit.Test
@@ -126,7 +119,7 @@ public class ProductControllerTest extends BaseTest {
 				.andExpect(content().contentType("application/json;charset=UTF-8"))
 				.andReturn().getResponse().getContentAsString(), JsonObject.class);
 
-		MatcherAssert.assertThat(obj.get("id").getAsString(), equalTo(p1.getId().toString()));
+		MatcherAssert.assertThat(obj.get("id").getAsLong(), equalTo(p1.getId()));
 		MatcherAssert.assertThat(obj.get("description").getAsString(), equalTo(p1.getDescription()));
 		MatcherAssert.assertThat(obj.get("price").getAsFloat(), equalTo(p1.getPrice()));
 		MatcherAssert.assertThat(obj.get("availableQuantity").getAsInt(), equalTo(p1.getAvailableQuantity()));
@@ -153,9 +146,9 @@ public class ProductControllerTest extends BaseTest {
 				.andReturn().getResponse().getContentAsString(), JsonObject.class);
 
 		MatcherAssert.assertThat(obj.get("id").getAsLong(), equalTo(p1.getId()));
-		MatcherAssert.assertThat(obj.get("description").getAsString(), equalTo("new update"));
-		MatcherAssert.assertThat(obj.get("price").getAsFloat(), equalTo(111f));
-		MatcherAssert.assertThat(obj.get("availableQuantity").getAsInt(), equalTo(22));
+		MatcherAssert.assertThat(obj.get("description").getAsString(), equalTo(p1.getDescription()));
+		MatcherAssert.assertThat(obj.get("price").getAsFloat(), equalTo(p1.getPrice()));
+		MatcherAssert.assertThat(obj.get("availableQuantity").getAsInt(), equalTo(p1.getAvailableQuantity()));
 	}
 
 	@org.junit.Test

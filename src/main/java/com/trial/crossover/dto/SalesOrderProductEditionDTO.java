@@ -29,7 +29,9 @@ public class SalesOrderProductEditionDTO implements DTO {
 	}
 
 	public void setProductQuantity(Integer productQuantity) {
-		if (productQuantity != null && productQuantity > 0) {
+		if (productQuantity != null && productQuantity < 0) {
+			this.productQuantity = 0;
+		} else {
 			this.productQuantity = productQuantity;
 		}
 	}

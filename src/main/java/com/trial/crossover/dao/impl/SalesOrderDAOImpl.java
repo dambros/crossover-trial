@@ -18,13 +18,13 @@ class SalesOrderDAOImpl extends BaseDAO implements SalesOrderDAO {
 
 	@Override
 	public List<SalesOrder> all() {
-		Query query = getCurrentSession().createQuery("FROM SalesOrder s LEFT JOIN FETCH s.orderProducts p ORDER BY s.id ASC");
+		Query query = getCurrentSession().createQuery("SELECT DISTINCT s FROM SalesOrder s JOIN FETCH s.orderProducts p ORDER BY s.id ASC");
 		return (List<SalesOrder>) query.list();
 	}
 
 	@Override
 	public SalesOrder get(long id) {
-		Query query = getCurrentSession().createQuery("FROM SalesOrder s LEFT JOIN FETCH s.orderProducts p WHERE s.id = :id");
+		Query query = getCurrentSession().createQuery("FROM SalesOrder s JOIN FETCH s.orderProducts p WHERE s.id = :id");
 		query.setParameter("id", id);
 		return (SalesOrder) query.uniqueResult();
 	}
@@ -37,7 +37,7 @@ class SalesOrderDAOImpl extends BaseDAO implements SalesOrderDAO {
 
 	@Override
 	public SalesOrder update(SalesOrder salesOrder) {
-		getCurrentSession().update(salesOrder);
+		getCurrentSession().merge(salesOrder);
 		return salesOrder;
 	}
 
