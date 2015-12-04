@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -179,7 +180,11 @@ public class SalesOrderServiceImpl implements SalesOrderService {
 			errors.add(new FieldErrorDTO("customer", "not enough credit"));
 		}
 
-		if (dto.getTotalPrice() != totalPrice) {
+		DecimalFormat twoDForm = new DecimalFormat("#.##");
+		float dtoTotalPrice = Float.valueOf(twoDForm.format(dto.getTotalPrice()));
+		totalPrice = Float.valueOf(twoDForm.format(totalPrice));
+
+		if (dtoTotalPrice != totalPrice) {
 			errors.add(new FieldErrorDTO("totalPrice", "incorrect amount"));
 		}
 
@@ -196,7 +201,7 @@ public class SalesOrderServiceImpl implements SalesOrderService {
 		order.setId(dto.getId());
 		order.setCustomer(customer);
 		order.setOrderProducts(orderProducts);
-		order.setTotalPrice(dto.getTotalPrice());
+		order.setTotalPrice(dtoTotalPrice);
 		order.setOrderNumber(dto.getOrderNumber());
 
 		return order;
