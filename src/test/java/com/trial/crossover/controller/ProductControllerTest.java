@@ -128,7 +128,7 @@ public class ProductControllerTest extends BaseTest {
 	@org.junit.Test
 	public void test_getProductInvalidId() throws Exception {
 		mockMvc.perform(get("/products/{id}", -1))
-				.andExpect(status().isBadRequest())
+				.andExpect(status().isNotFound())
 				.andExpect(content().contentType("application/json;charset=UTF-8"));
 	}
 

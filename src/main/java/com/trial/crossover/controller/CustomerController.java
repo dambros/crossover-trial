@@ -59,7 +59,7 @@ public class CustomerController {
 		CustomerDTO dto = customerService.get(id);
 
 		if (dto == null) {
-			return new ResponseEntity(new FieldErrorDTO("id", "invalid value"), HttpStatus.BAD_REQUEST);
+			return new ResponseEntity(new FieldErrorDTO("id", "invalid value"), HttpStatus.NOT_FOUND);
 		}
 
 		return new ResponseEntity(dto, HttpStatus.OK);

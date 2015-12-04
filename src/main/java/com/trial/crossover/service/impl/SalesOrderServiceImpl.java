@@ -102,19 +102,19 @@ public class SalesOrderServiceImpl implements SalesOrderService {
 		List<SalesOrderProduct> previousProducts = order.getOrderProducts();
 		float previousAmount = order.getTotalPrice();
 
+		//return credit to customer before validating new oder
+		Customer c = order.getCustomer();
+		c.setCreditLimit(c.getCreditLimit() + previousAmount);
+		c.setCurrentCredit(c.getCurrentCredit() - previousAmount);
+
+		for (SalesOrderProduct prod : previousProducts) {
+			//return products to stock before validating new oder
+			prod.getProduct().setAvailableQuantity(prod.getProduct().getAvailableQuantity() + prod.getProductQuantity());
+		}
+
 		Object obj = validateBusinessLogic(dto);
 
 		if (obj instanceof SalesOrder) {
-
-			for (SalesOrderProduct prod : previousProducts) {
-				//return products to stock
-				prod.getProduct().setAvailableQuantity(prod.getProduct().getAvailableQuantity() + prod.getProductQuantity());
-			}
-
-			//return credit to customer
-			Customer c = order.getCustomer();
-			c.setCreditLimit(c.getCreditLimit() + previousAmount);
-			c.setCurrentCredit(c.getCurrentCredit() - previousAmount);
 
 			order = salesOrderDAO.update((SalesOrder) obj);
 
@@ -122,11 +122,6 @@ public class SalesOrderServiceImpl implements SalesOrderService {
 			for (SalesOrderProduct s : order.getOrderProducts()) {
 				s.getProduct().setAvailableQuantity(s.getProduct().getAvailableQuantity() - s.getProductQuantity());
 			}
-
-			//update new customer credit
-			c.setCurrentCredit(c.getCurrentCredit() + order.getTotalPrice());
-			c.setCreditLimit(c.getCreditLimit() - order.getTotalPrice());
-			customerDAO.update(c);
 
 			return getOrderDTO(order);
 		}
@@ -193,6 +188,7 @@ public class SalesOrderServiceImpl implements SalesOrderService {
 			return errors;
 		}
 
+		//update customer credit
 		customer.setCurrentCredit(customer.getCurrentCredit() + dto.getTotalPrice());
 		customer.setCreditLimit(customer.getCreditLimit() - dto.getTotalPrice());
 

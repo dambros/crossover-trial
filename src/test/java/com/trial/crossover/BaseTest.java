@@ -128,8 +128,12 @@ public abstract class BaseTest {
 		d2.setOrderProducts(prods2);
 		s2 = (SalesOrderDTO) salesOrderService.create(d2);
 
-		//Updating product due to sales order creation
+		//Updating product and customer due to sales order creation
 		p1 = productService.get(p1.getId());
 		p2 = productService.get(p2.getId());
+		c1 = customerService.get(c1.getId());
+		c2 = customerService.get(c2.getId());
+
+
 	}
 }

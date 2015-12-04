@@ -69,7 +69,7 @@ public class SalesOrderController {
 		SalesOrderDTO dto = salesOrderService.get(id);
 
 		if (dto == null) {
-			return new ResponseEntity(new FieldErrorDTO("id", "invalid value"), HttpStatus.BAD_REQUEST);
+			return new ResponseEntity(new FieldErrorDTO("id", "invalid value"), HttpStatus.NOT_FOUND);
 		}
 
 		return new ResponseEntity(dto, HttpStatus.OK);

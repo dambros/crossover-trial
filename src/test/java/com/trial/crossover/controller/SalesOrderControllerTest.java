@@ -16,6 +16,7 @@ import java.util.List;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -83,10 +84,7 @@ public class SalesOrderControllerTest extends BaseTest {
 	public void test_createNewSalesOrder() throws Exception {
 		c1 = customerService.get(c1.getId());
 
-		int previousOrders = gson.fromJson(mockMvc.perform(get("/orders/all"))
-				.andExpect(status().isOk())
-				.andExpect(content().contentType("application/json;charset=UTF-8"))
-				.andReturn().getResponse().getContentAsString(), JsonArray.class).size();
+		int previousOrders = getOrdersCount();
 
 		SalesOrderProductEditionDTO prodDto1 = new SalesOrderProductEditionDTO();
 		prodDto1.setProductQuantity(3);
@@ -110,10 +108,7 @@ public class SalesOrderControllerTest extends BaseTest {
 		JsonObject orderProd1 = prodArray1.get(0).getAsJsonObject();
 		JsonObject prod1 = orderProd1.get("product").getAsJsonObject();
 
-		int currentOrders = gson.fromJson(mockMvc.perform(get("/orders/all"))
-				.andExpect(status().isOk())
-				.andExpect(content().contentType("application/json;charset=UTF-8"))
-				.andReturn().getResponse().getContentAsString(), JsonArray.class).size();
+		int currentOrders = getOrdersCount();
 
 		MatcherAssert.assertThat(currentOrders, greaterThan(previousOrders));
 		MatcherAssert.assertThat(obj.get("id").getAsString(), notNullValue());
@@ -261,7 +256,7 @@ public class SalesOrderControllerTest extends BaseTest {
 	@org.junit.Test
 	public void test_getSalesOrderWithInvalidId() throws Exception {
 		mockMvc.perform(get("/orders/{id}", -1))
-				.andExpect(status().isBadRequest())
+				.andExpect(status().isNotFound())
 				.andExpect(content().contentType("application/json;charset=UTF-8"));
 	}
 
@@ -270,11 +265,14 @@ public class SalesOrderControllerTest extends BaseTest {
 		SalesOrderProductEditionDTO prodDto1 = new SalesOrderProductEditionDTO();
 		prodDto1.setProductQuantity(7); //6 items added
 		prodDto1.setProduct(p1.getId());
-		List<SalesOrderProductEditionDTO> prods = new ArrayList<>(Arrays.asList(prodDto1));
+		SalesOrderProductEditionDTO prodDto2 = new SalesOrderProductEditionDTO();
+		prodDto2.setProductQuantity(2); // 2 items added
+		prodDto2.setProduct(p2.getId());
+		List<SalesOrderProductEditionDTO> prods = new ArrayList<>(Arrays.asList(prodDto1, prodDto2));
 
 		SalesOrderEditionDTO d = new SalesOrderEditionDTO();
 		d.setId(s1.getId());
-		d.setTotalPrice(p1.getPrice() * prodDto1.getProductQuantity());
+		d.setTotalPrice((p1.getPrice() * prodDto1.getProductQuantity()) + (p2.getPrice() * prodDto2.getProductQuantity()));
 		d.setCustomer(c1.getId());
 		d.setOrderNumber(12345678l);
 		d.setOrderProducts(prods);
@@ -290,62 +288,147 @@ public class SalesOrderControllerTest extends BaseTest {
 		JsonObject orderProd1 = prodArray1.get(0).getAsJsonObject();
 		JsonObject prod1 = orderProd1.get("product").getAsJsonObject();
 
+		JsonObject orderProd2 = prodArray1.get(1).getAsJsonObject();
+		JsonObject prod2 = orderProd2.get("product").getAsJsonObject();
+
 		MatcherAssert.assertThat(obj.get("id").getAsString(), notNullValue());
 		MatcherAssert.assertThat(obj.get("orderNumber").getAsLong(), equalTo(d.getOrderNumber()));
 		MatcherAssert.assertThat(obj.get("totalPrice").getAsFloat(), equalTo(d.getTotalPrice()));
-		MatcherAssert.assertThat(orderProd1.get("id").getAsLong(), notNullValue());
 		MatcherAssert.assertThat(orderProd1.get("productQuantity").getAsInt(), equalTo(prods.get(0).getProductQuantity()));
 		MatcherAssert.assertThat(prod1.get("id").getAsLong(), equalTo(p1.getId()));
+		MatcherAssert.assertThat(orderProd2.get("productQuantity").getAsInt(), equalTo(prods.get(1).getProductQuantity()));
+		MatcherAssert.assertThat(prod2.get("id").getAsLong(), equalTo(p2.getId()));
 
-		//6 p1 items were added on this update
+		//6 p1 items were added on this update and 2 p2
 		MatcherAssert.assertThat(prod1.get("availableQuantity").getAsInt(), equalTo(p1.getAvailableQuantity() - 6));
+		MatcherAssert.assertThat(prod2.get("availableQuantity").getAsInt(), equalTo(p2.getAvailableQuantity() - 2));
+
+		JsonObject customer = obj.get("customer").getAsJsonObject();
+		MatcherAssert.assertThat(customer.get("id").getAsLong(), equalTo(c1.getId()));
+
+		//customer credit should be:
+		//currentCredit = previousCurrentCredit - previousOrderTotalAmount + currentOrderTotalAmount
+		//creditLimit = previousCreditLimit + previousOrderTotalAmount - currentOrderTotalAmount
+		float currentCredit = c1.getCurrentCredit() - s1.getTotalPrice() + d.getTotalPrice();
+		float creditLimit = c1.getCreditLimit() + s1.getTotalPrice() - d.getTotalPrice();
+
+		//check customer credit
+		MatcherAssert.assertThat(customer.get("currentCredit").getAsFloat(), equalTo(currentCredit));
+		MatcherAssert.assertThat(customer.get("creditLimit").getAsFloat(), equalTo(creditLimit));
 	}
-//
-//	@org.junit.Test
-//	public void test_updateProductWithMissingFields() throws Exception {
-//		p1.setDescription(null);
-//		String json = gson.toJson(p1);
-//
-//		mockMvc.perform(post("/products/update")
-//				.contentType(MediaType.APPLICATION_JSON).content(json))
-//				.andExpect(status().isBadRequest())
-//				.andExpect(content().contentType("application/json;charset=UTF-8"));
-//
-//		p1.setDescription("new Prod");
-//		p1.setAvailableQuantity(null);
-//		String json2 = gson.toJson(p1);
-//
-//		mockMvc.perform(post("/products/update")
-//				.contentType(MediaType.APPLICATION_JSON).content(json2))
-//				.andExpect(status().isBadRequest())
-//				.andExpect(content().contentType("application/json;charset=UTF-8"));
-//
-//		p1.setAvailableQuantity(100);
-//		p1.setPrice(null);
-//		String json3 = gson.toJson(p1);
-//
-//		mockMvc.perform(post("/products/update")
-//				.contentType(MediaType.APPLICATION_JSON).content(json3))
-//				.andExpect(status().isBadRequest())
-//				.andExpect(content().contentType("application/json;charset=UTF-8"));
-//
-//		p1.setPrice(66f);
-//		p1.setId(null);
-//		String json4 = gson.toJson(p1);
-//
-//		mockMvc.perform(post("/products/update")
-//				.contentType(MediaType.APPLICATION_JSON).content(json4))
-//				.andExpect(status().isBadRequest())
-//				.andExpect(content().contentType("application/json;charset=UTF-8"));
-//	}
-//
-//	@org.junit.Test
-//	public void test_updateProductWithInvalidId() throws Exception {
-//		p1.setId(-1l);
-//		mockMvc.perform(post("/products/update")
-//				.contentType(MediaType.APPLICATION_JSON).content(gson.toJson(p1)))
-//				.andExpect(status().isBadRequest())
-//				.andExpect(content().contentType("application/json;charset=UTF-8"));
-//	}
+
+	@org.junit.Test
+	public void test_updateSalesOrderWithMissingFields() throws Exception {
+		SalesOrderProductEditionDTO prodDto1 = new SalesOrderProductEditionDTO();
+		prodDto1.setProductQuantity(3);
+		prodDto1.setProduct(p1.getId());
+		List<SalesOrderProductEditionDTO> prods = new ArrayList<>(Arrays.asList(prodDto1));
+
+		SalesOrderEditionDTO d = new SalesOrderEditionDTO();
+		d.setId(null);
+		d.setOrderNumber(123l);
+		d.setTotalPrice(p1.getPrice() * prodDto1.getProductQuantity());
+		d.setCustomer(c1.getId());
+		d.setOrderProducts(prods);
+
+		mockMvc.perform(post("/orders/update")
+				.contentType(MediaType.APPLICATION_JSON).content(gson.toJson(d)))
+				.andExpect(status().isBadRequest())
+				.andExpect(content().contentType("application/json;charset=UTF-8"));
+
+		d.setId(s1.getId());
+		d.setOrderNumber(null);
+
+		mockMvc.perform(post("/orders/update")
+				.contentType(MediaType.APPLICATION_JSON).content(gson.toJson(d)))
+				.andExpect(status().isBadRequest())
+				.andExpect(content().contentType("application/json;charset=UTF-8"));
+
+		d.setOrderNumber(123l);
+		d.setTotalPrice(null);
+
+		mockMvc.perform(post("/orders/update")
+				.contentType(MediaType.APPLICATION_JSON).content(gson.toJson(d)))
+				.andExpect(status().isBadRequest())
+				.andExpect(content().contentType("application/json;charset=UTF-8"));
+
+		d.setTotalPrice(p1.getPrice() * prodDto1.getProductQuantity());
+		d.setCustomer(null);
+
+		mockMvc.perform(post("/orders/update")
+				.contentType(MediaType.APPLICATION_JSON).content(gson.toJson(d)))
+				.andExpect(status().isBadRequest())
+				.andExpect(content().contentType("application/json;charset=UTF-8"));
+
+
+		d.setCustomer(c1.getId());
+		d.setOrderProducts(null);
+
+		mockMvc.perform(post("/orders/update")
+				.contentType(MediaType.APPLICATION_JSON).content(gson.toJson(d)))
+				.andExpect(status().isBadRequest())
+				.andExpect(content().contentType("application/json;charset=UTF-8"));
+
+		prodDto1.setProduct(null);
+		prods.set(0, prodDto1);
+		d.setOrderProducts(prods);
+
+		mockMvc.perform(post("/orders/update")
+				.contentType(MediaType.APPLICATION_JSON).content(gson.toJson(d)))
+				.andExpect(status().isBadRequest())
+				.andExpect(content().contentType("application/json;charset=UTF-8"));
+
+		prodDto1.setProduct(p1.getId());
+		prodDto1.setProductQuantity(null);
+		prods.set(0, prodDto1);
+		d.setOrderProducts(prods);
+
+		mockMvc.perform(post("/orders/update")
+				.contentType(MediaType.APPLICATION_JSON).content(gson.toJson(d)))
+				.andExpect(status().isBadRequest())
+				.andExpect(content().contentType("application/json;charset=UTF-8"));
+	}
+
+	@org.junit.Test
+	public void test_updateSalesOrderWithInvalidId() throws Exception {
+		SalesOrderProductEditionDTO prodDto1 = new SalesOrderProductEditionDTO();
+		prodDto1.setProductQuantity(3);
+		prodDto1.setProduct(p1.getId());
+		List<SalesOrderProductEditionDTO> prods = new ArrayList<>(Arrays.asList(prodDto1));
+
+		SalesOrderEditionDTO d = new SalesOrderEditionDTO();
+		d.setId(-1l);
+		d.setOrderNumber(123l);
+		d.setTotalPrice(p1.getPrice() * prodDto1.getProductQuantity());
+		d.setCustomer(c1.getId());
+		d.setOrderProducts(prods);
+		mockMvc.perform(post("/orders/update")
+				.contentType(MediaType.APPLICATION_JSON).content(gson.toJson(d)))
+				.andExpect(status().isBadRequest())
+				.andExpect(content().contentType("application/json;charset=UTF-8"));
+	}
+
+	@org.junit.Test
+	public void test_deleteSalesOrder() throws Exception {
+		int previousOrders = getOrdersCount();
+
+		mockMvc.perform(delete("/orders/{id}", s1.getId())).andExpect(status().isOk());
+
+		int currentOrders = getOrdersCount();
+
+		MatcherAssert.assertThat(previousOrders, greaterThan(currentOrders));
+
+		mockMvc.perform(get("/orders/{id}", s1.getId()))
+				.andExpect(status().isNotFound())
+				.andExpect(content().contentType("application/json;charset=UTF-8"));
+	}
+
+	private int getOrdersCount() throws Exception {
+		int currentOrders = gson.fromJson(mockMvc.perform(get("/orders/all"))
+				.andExpect(status().isOk())
+				.andExpect(content().contentType("application/json;charset=UTF-8"))
+				.andReturn().getResponse().getContentAsString(), JsonArray.class).size();
+		return currentOrders;
+	}
 
 }
